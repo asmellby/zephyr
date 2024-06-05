@@ -6,6 +6,7 @@
 
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 #include <silabs/gpio_gecko.h>
+#include <dt-bindings/pinctrl/silabs/xg22-pinctrl.h>
 
 / {
 	chosen {
@@ -62,6 +63,43 @@
 		startup-delay-us = <100000>;
 	};
 
+};
+
+&pinctrl {
+	/* configuration for usart0 device, operating as SPI */
+	usart0_default: usart0_default {
+		out {
+			pins = <USART0_TX_PC0>, <USART0_CLK_PC2>;
+			drive-push-pull;
+			output-high;
+		};
+		in {
+			pins = <USART0_RX_PC1>;
+			input-enable;
+		};
+	};
+
+	/* configuration for usart1 device, default state - operating as UART */
+	usart1_default: usart1_default {
+		out {
+			pins = <USART1_TX_PA5>;
+			drive-push-pull;
+			output-high;
+		};
+		in {
+			pins = <USART1_RX_PA6>;
+			input-enable;
+			silabs,input-filter;
+		};
+	};
+
+	i2c0_default: i2c0_default {
+		group1 {
+			pins = <I2C0_SDA_PD2>, <I2C0_SCL_PD3>;
+			drive-open-drain;
+			bias-pull-up;
+		};
+	};
 };
 
 &cpu0 {
@@ -140,17 +178,6 @@
 
 &trng {
 	status = "okay";
-};
-
-&pinctrl {
-	i2c0_default: i2c0_default {
-		group1 {
-			psels = <GECKO_PSEL(I2C_SDA, D, 2)>,
-				<GECKO_PSEL(I2C_SCL, D, 3)>,
-				<GECKO_LOC(I2C_SDA, 3)>,
-				<GECKO_LOC(I2C_SCL, 3)>;
-		};
-	};
 };
 
 &i2c0 {

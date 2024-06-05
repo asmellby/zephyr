@@ -6,8 +6,8 @@
 
 /dts-v1/;
 #include <silabs/efr32mg24b310f1536im48.dtsi>
-#include <silabs/efr32mg24-pinctrl.dtsi>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
+#include "xg24_dk2601b-pinctrl.dtsi"
 
 / {
 	model = "Silicon Labs BRD2601B (xG24 Dev Kit)";

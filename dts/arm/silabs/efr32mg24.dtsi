@@ -8,7 +8,6 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <arm/silabs/gpio_gecko.h>
 #include <dt-bindings/i2c/i2c.h>
-#include <dt-bindings/pinctrl/gecko-pinctrl.h>
 #include <dt-bindings/adc/adc.h>
 #include <freq.h>
 
@@ -223,11 +222,7 @@
 
 / {
 	pinctrl: pin-controller {
-		/* Pin controller is a "virtual" device since SiLabs SoCs do pin
-		 * control in a distributed way (GPIO registers and PSEL
-		 * registers on each peripheral).
-		 */
-		compatible = "silabs,gecko-pinctrl";
+		compatible = "silabs,dbus-pinctrl";
 	};
 
 	hwinfo: hwinfo {
