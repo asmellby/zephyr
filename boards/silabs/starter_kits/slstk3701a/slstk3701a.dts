@@ -92,6 +92,18 @@
 	status = "okay";
 };
 
+&i2c2 {
+	pinctrl-0 = <&i2c2_default>;
+	pinctrl-names = "default";
+	status = "okay";
+
+	si7021: si7021@40 {
+		compatible = "silabs,si7006";
+		reg = <0x40>;
+		status = "okay";
+	};
+};
+
 &rtcc0 {
 	prescaler = <1>;
 	status = "okay";
@@ -108,6 +120,12 @@
 
 &gpiob {
 	status = "okay";
+
+	sensor-enable {
+		gpio-hog;
+		gpios = <3 GPIO_ACTIVE_HIGH>;
+		output-high;
+	};
 };
 
 &gpioc {
