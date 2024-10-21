@@ -14,4 +14,10 @@ rsource "*/Kconfig"
 config ARM_SECURE_FIRMWARE
 	default y
 
+config SILABS_SLEEPTIMER_TIMER
+	default y
+
+config CORTEX_M_SYSTICK
+	default n if SILABS_SLEEPTIMER_TIMER
+
 endif
