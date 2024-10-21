@@ -18,6 +18,10 @@
 #include <em_gpio.h>
 #endif /* CONFIG_PINCTRL */
 
+#ifdef CONFIG_PM_DEVICE
+#include <zephyr/pm/device.h>
+#endif
+
 #ifdef CONFIG_CLOCK_CONTROL
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/clock_control_silabs.h>
@@ -488,6 +492,33 @@ static int uart_gecko_init(const struct device *dev)
 	return 0;
 }
 
+#ifndef CONFIG_PM_DEVICE
+#define GECKO_USART_PM_INST(idx) NULL
+#else
+#define GECKO_USART_PM_INST(idx) PM_DEVICE_DT_INST_GET(idx)
+
+static int uart_gecko_pm_action(const struct device *dev, enum pm_device_action action)
+{
+	const struct uart_gecko_config *config = dev->config;
+
+	switch (action) {
+	case PM_DEVICE_ACTION_SUSPEND:
+		/* Wait for TX FIFO to flush before suspending */
+		while (!(USART_StatusGet(config->base) & USART_STATUS_TXIDLE)) {
+		}
+		break;
+
+	case PM_DEVICE_ACTION_RESUME:
+		break;
+
+	default:
+		return -ENOTSUP;
+	}
+
+	return 0;
+}
+#endif
+
 static const struct uart_driver_api uart_gecko_driver_api = {
 	.poll_in = uart_gecko_poll_in,
 	.poll_out = uart_gecko_poll_out,
@@ -682,10 +713,18 @@ DT_INST_FOREACH_STATUS_OKAY(GECKO_UART_INIT)
 #define GECKO_USART_IRQ_HANDLER(idx)
 #endif
 
+#ifdef CONFIG_PM_DEVICE
+#define GECKO_USART_PM_INIT(idx)					       \
+	PM_DEVICE_DT_INST_DEFINE(idx, uart_gecko_pm_action);
+#else
+#define GECKO_USART_PM_INIT(idx)
+#endif
+
 #ifdef CONFIG_PINCTRL
 #define GECKO_USART_INIT(idx)						       \
 	PINCTRL_DT_INST_DEFINE(idx);					       \
 	GECKO_USART_IRQ_HANDLER_DECL(idx);				       \
+	GECKO_USART_PM_INIT(idx)					       \
 									       \
 	static const struct uart_gecko_config usart_gecko_cfg_##idx = {        \
 		.pcfg = PINCTRL_DT_INST_DEV_CONFIG_GET(idx),		       \
@@ -697,7 +736,7 @@ DT_INST_FOREACH_STATUS_OKAY(GECKO_UART_INIT)
 									       \
 	static struct uart_gecko_data usart_gecko_data_##idx;		       \
 									       \
-	DEVICE_DT_INST_DEFINE(idx, uart_gecko_init, NULL,		       \
+	DEVICE_DT_INST_DEFINE(idx, uart_gecko_init, GECKO_USART_PM_INST(idx),  \
 			    &usart_gecko_data_##idx,			       \
 			    &usart_gecko_cfg_##idx, PRE_KERNEL_1,	       \
 			    CONFIG_SERIAL_INIT_PRIORITY,		       \
@@ -710,6 +749,7 @@ DT_INST_FOREACH_STATUS_OKAY(GECKO_UART_INIT)
 	VALIDATE_GECKO_UART_RTS_CTS_PIN_LOCATIONS(idx);			       \
 									       \
 	GECKO_USART_IRQ_HANDLER_DECL(idx);				       \
+	GECKO_USART_PM_INIT(idx)					       \
 									       \
 	static const struct uart_gecko_config usart_gecko_cfg_##idx = {        \
 		.base = (USART_TypeDef *)DT_INST_REG_ADDR(idx),		       \
@@ -725,7 +765,7 @@ DT_INST_FOREACH_STATUS_OKAY(GECKO_UART_INIT)
 									       \
 	static struct uart_gecko_data usart_gecko_data_##idx;		       \
 									       \
-	DEVICE_DT_INST_DEFINE(idx, uart_gecko_init, NULL,		       \
+	DEVICE_DT_INST_DEFINE(idx, uart_gecko_init, GECKO_USART_PM_INST(idx),  \
 			    &usart_gecko_data_##idx,			       \
 			    &usart_gecko_cfg_##idx, PRE_KERNEL_1,	       \
 			    CONFIG_SERIAL_INIT_PRIORITY,		       \
