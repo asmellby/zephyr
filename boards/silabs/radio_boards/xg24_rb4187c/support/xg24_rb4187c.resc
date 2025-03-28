@@ -1,0 +1,32 @@
+:name: xg24_rb4187c
+:description: This script runs applications on xG24-RB4187C in simulation
+
+$name?="xg24_rb4187c"
+
+using sysbus
+emulation SetGlobalSerialExecution true
+emulation SetGlobalQuantum "0.000020"
+emulation CreateBLEMedium "wireless"
+#emulation LogBLETraffic
+
+macro reset
+"""
+    sysbus LoadELF $elf
+    sysbus LogAllPeripheralsAccess false
+"""
+
+mach create $name
+machine LoadPlatformDescription $ORIGIN/xg24_rb4187c.repl
+
+runMacro $reset
+logLevel 1
+
+# RF
+connector Connect sysbus.radio wireless
+
+# Console on socket
+#emulation CreateServerSocketTerminal 3451 "term"
+#connector Connect sysbus.usart0 term
+
+# Console in window
+showAnalyzer usart0
