@@ -21,6 +21,8 @@ manifest:
   remotes:
     - name: upstream
       url-base: https://github.com/zephyrproject-rtos
+    - name: asmellby
+      url-base: https://github.com/asmellby
     - name: babblesim
       url-base: https://github.com/BabbleSim
 
@@ -235,7 +237,8 @@ manifest:
       groups:
         - hal
     - name: hal_silabs
-      revision: 14dff7b65169055e347d3ddb49ee872ecb864de1
+      remote: asmellby
+      revision: experimental/mbedtls-driver-separation
       path: modules/hal/silabs
       groups:
         - hal
@@ -310,8 +313,9 @@ manifest:
     - name: lvgl
       revision: b03edc8e6282a963cd312cd0b409eb5ce263ea75
       path: modules/lib/gui/lvgl
-    - name: mbedtls
-      revision: 85440ef5fffa95d0e9971e9163719189cf34d979
+    - name: zephyr-mbedtls
+      remote: asmellby
+      revision: experimental/driver-separation
       path: modules/crypto/mbedtls
       groups:
         - crypto
