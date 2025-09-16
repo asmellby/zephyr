@@ -16,4 +16,8 @@ choice PM_POLICY
 	depends on PM
 endchoice
 
+# Use PSA Crypto Driver and wrapper from hal_silabs
+configdefault MBEDTLS_PSA_CRYPTO_BUILTIN_DRIVER_WRAPPER
+	default n
+
 endif

@@ -348,3 +348,5 @@ zephyr_library_sources_ifdef(
 
 zephyr_linker_sources(ROM_SECTIONS linker/code_classification_text.ld)
 zephyr_linker_sources(RAMFUNC_SECTION linker/code_classification_ramfunc.ld)
+
+add_subdirectory(platform/security)

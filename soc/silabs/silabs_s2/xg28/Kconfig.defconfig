@@ -7,4 +7,8 @@ config NUM_IRQS
 	# must be >= the highest interrupt number used
 	default 78
 
+# Use PSA Crypto Driver and wrapper from hal_silabs
+configdefault MBEDTLS_PSA_CRYPTO_BUILTIN_DRIVER_WRAPPER
+	default n
+
 endif

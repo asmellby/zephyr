@@ -33,4 +33,20 @@ configdefault ZERO_LATENCY_IRQS
 configdefault ZERO_LATENCY_LEVELS
 	default 2
 
+if MBEDTLS_PSA_CRYPTO_SILABS_DRIVER_WRAPPER
+
+configdefault MBEDTLS_DRIVER_CONFIG_ENABLE
+	default y if PSA_CRYPTO_DRIVER_SILABS_HSE
+
+configdefault  MBEDTLS_DRIVER_CONFIG_FILE
+	default "sl_mbedtls_config_zephyr.h"
+
+configdefault PSA_CRYPTO_DRIVER_CONFIG_ENABLE
+	default y if PSA_CRYPTO_DRIVER_SILABS_HSE
+
+configdefault  PSA_CRYPTO_DRIVER_CONFIG_FILE
+	default "sl_psa_crypto_config_zephyr.h"
+
+endif
+
 endif

@@ -32,4 +32,18 @@ config SILABS_DEVICE_IS_MODULE
 	bool
 	default n
 
+if MBEDTLS_PSA_CRYPTO_C
+
+config MBEDTLS_PSA_CRYPTO_SILABS_DRIVER_WRAPPER
+	bool "PSA Crypto Driver Wrapper with Silicon Labs hardware acceleration support"
+	default y if !MBEDTLS_PSA_CRYPTO_BUILTIN_DRIVER_WRAPPER
+
+config PSA_CRYPTO_DRIVER_SILABS_HSE
+	bool "PSA Crypto Driver for Secure Engine"
+	depends on MBEDTLS_PSA_CRYPTO_SILABS_DRIVER_WRAPPER
+	depends on $(dt_has_compat,$(DT_COMPAT_SILABS_GECKO_SEMAILBOX))
+	default y
+
+endif
+
 endif
