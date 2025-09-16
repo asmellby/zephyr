@@ -25,3 +25,16 @@ config PSA_WANT_KEY_TYPE_DH_KEY_PAIR_BASIC
 	depends on PSA_WANT_KEY_TYPE_DH_KEY_PAIR_IMPORT || \
 		   PSA_WANT_KEY_TYPE_DH_KEY_PAIR_EXPORT || \
 		   PSA_WANT_KEY_TYPE_DH_KEY_PAIR_GENERATE
+
+config PSA_CRYPTO_DRIVER_CONFIG_ENABLE
+	bool "Driver PSA Crypto config file"
+	help
+	  Enable driver PSA Crypto config file that will be included at the end of
+	  the generic config file. This file can contain driver-specific
+	  configurations for PSA Crypto.
+
+config PSA_CRYPTO_DRIVER_CONFIG_FILE
+	string "Driver configuration file for PSA Crypto" if PSA_CRYPTO_DRIVER_CONFIG_ENABLE
+	help
+	  Driver config file that can contain PSA Crypto configs that were not
+	  covered by the generic config file.

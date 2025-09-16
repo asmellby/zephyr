@@ -59,7 +59,13 @@ H_HEADER="""\
 #define CONFIG_PSA_H
 """.format(os.path.basename(__file__), INPUT_REL_PATH)
 
-H_FOOTER="\n#endif /* CONFIG_PSA_H */\n"
+H_FOOTER="""
+#if defined(CONFIG_PSA_CRYPTO_DRIVER_CONFIG_ENABLE)
+#include CONFIG_PSA_CRYPTO_DRIVER_CONFIG_FILE
+#endif
+
+#endif /* CONFIG_PSA_H */
+"""
 
 # In Mbed TLS the PSA_WANT_KEY_TYPE_[ECC|RSA|DH]_KEY_PAIR_BASIC build symbols
 # are automatically enabled whenever any other _IMPORT, _EXPORT, _GENERATE or

@@ -461,6 +461,19 @@ config MBEDTLS_OPENTHREAD_OPTIMIZATIONS_ENABLED
 	  aims to use other mbedTLS services on top of OpenThread (e.g. secure
 	  sockets), it's advised to disable this option.
 
+config MBEDTLS_DRIVER_CONFIG_ENABLE
+	bool "Driver mbedTLS config file"
+	help
+	  Enable driver mbedTLS config file that will be included at the end of
+	  the generic config file. This file can contain driver-specific
+	  configurations for mbedTLS.
+
+config MBEDTLS_DRIVER_CONFIG_FILE
+	string "Driver configuration file for mbed TLS" if MBEDTLS_DRIVER_CONFIG_ENABLE
+	help
+	  Driver config file that can contain mbedTLS configs that were not
+	  covered by the generic config file.
+
 config MBEDTLS_USER_CONFIG_ENABLE
 	bool "User mbedTLS config file"
 	help
