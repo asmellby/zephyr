@@ -44,6 +44,12 @@ zephyr_interface_library_named(mbedTLS)
         include
     )
 
+    if (CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_DRIVER_WRAPPER)
+      target_include_directories(mbedTLS INTERFACE
+        ${ZEPHYR_CURRENT_MODULE_DIR}/include/driver
+      )
+    endif()
+
     if (CONFIG_MBEDTLS_PSA_P256M_DRIVER_RAW)
       target_include_directories(mbedTLS INTERFACE
         ${ZEPHYR_CURRENT_MODULE_DIR}/3rdparty/p256-m/p256-m
@@ -141,7 +147,6 @@ zephyr_interface_library_named(mbedTLS)
       list(APPEND crypto_source
         ${ZEPHYR_CURRENT_MODULE_DIR}/library/psa_crypto_aead.c
         ${ZEPHYR_CURRENT_MODULE_DIR}/library/psa_crypto_cipher.c
-        ${ZEPHYR_CURRENT_MODULE_DIR}/library/psa_crypto_driver_wrappers_no_static.c
         ${ZEPHYR_CURRENT_MODULE_DIR}/library/psa_crypto_ecp.c
         ${ZEPHYR_CURRENT_MODULE_DIR}/library/psa_crypto_ffdh.c
         ${ZEPHYR_CURRENT_MODULE_DIR}/library/psa_crypto_hash.c
@@ -155,6 +160,14 @@ zephyr_interface_library_named(mbedTLS)
         ${ZEPHYR_CURRENT_MODULE_DIR}/library/psa_crypto_client.c
         ${ZEPHYR_CURRENT_MODULE_DIR}/library/psa_crypto_slot_management.c
       )
+      if (CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_DRIVER_WRAPPER)
+        list(APPEND crypto_source
+          ${ZEPHYR_CURRENT_MODULE_DIR}/library/driver/psa_crypto_driver_wrappers_no_static.c
+        )
+        zephyr_library_include_directories(${ZEPHYR_CURRENT_MODULE_DIR}/library/driver)
+      else()
+        zephyr_library_link_libraries(mbedTLSCryptoDriver PRIVATE)
+      endif()
     endif()
 
     if(CONFIG_MBEDTLS_PSA_P256M_DRIVER_ENABLED)

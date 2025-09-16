@@ -653,6 +653,13 @@ config MBEDTLS_PSA_KEY_SLOT_COUNT
 	  * the heap-allocated memory to store the key material of a given slot,
 	    if it is used and MBEDTLS_PSA_STATIC_KEY_SLOTS is not set.
 
+config MBEDTLS_PSA_CRYPTO_BUILTIN_DRIVER_WRAPPER
+	bool "Built-in driver wrapper for PSA crypto"
+	default y
+	help
+	  Enable the use of the built-in driver wrapper for PSA crypto
+	  operations.
+
 endif # MBEDTLS_PSA_CRYPTO_C
 
 config MBEDTLS_SSL_DTLS_CONNECTION_ID
