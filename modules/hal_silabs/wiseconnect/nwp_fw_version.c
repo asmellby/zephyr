@@ -13,9 +13,9 @@
 const sl_wifi_firmware_version_t siwx91x_nwp_fw_expected_version = {
 	.rom_id = 0x0B,
 	.major = 2,
-	.minor = 15,
+	.minor = 16,
 	.security_version = 5,
-	.patch_num = 3,
+	.patch_num = 0,
 	.customer_id = 0,
-	.build_num = 1,
+	.build_num = 19,
 };
