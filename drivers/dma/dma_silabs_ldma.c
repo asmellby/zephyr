@@ -14,8 +14,10 @@
 #include <zephyr/irq.h>
 #include <zephyr/sys/mem_blocks.h>
 
+#include "sl_device_peripheral.h"
+#include "sl_dma_manager.h"
+
 #include "em_ldma.h"
-#include "dmadrv.h"
 
 #define DT_DRV_COMPAT silabs_ldma
 
@@ -34,6 +36,7 @@ struct dma_silabs_channel {
 };
 
 struct dma_silabs_config {
+	struct sl_dma_handle *handle;
 	void (*config_irq)(const struct device *dev);
 	const struct device *clock_dev;
 };
@@ -499,17 +502,24 @@ static int dma_silabs_get_status(const struct device *dev, uint32_t channel,
 
 bool dma_silabs_chan_filter(const struct device *dev, int channel, void *filter_param)
 {
-	ARG_UNUSED(dev);
+	const struct dma_silabs_config *config = dev->config;
+	sl_status_t status;
+
 	ARG_UNUSED(filter_param);
-	return (DMADRV_AllocateChannelById(channel, 0) == ECODE_EMDRV_DMADRV_OK);
+
+	status = sl_dma_manager_reserve_channel(config->handle, (uint8_t)channel);
+
+	return (status == SL_STATUS_OK);
 }
 
 void dma_silabs_chan_release(const struct device *dev, uint32_t channel)
 {
-	ARG_UNUSED(dev);
-	Ecode_t __maybe_unused err = DMADRV_FreeChannel(channel);
+	const struct dma_silabs_config *config = dev->config;
+	sl_status_t status;
 
-	__ASSERT_NO_MSG(err == ECODE_EMDRV_DMADRV_OK);
+	status = sl_dma_manager_free_channel(config->handle, (uint8_t)channel);
+
+	__ASSERT_NO_MSG(status == SL_STATUS_OK);
 }
 
 static int dma_silabs_init(const struct device *dev)
@@ -517,7 +527,7 @@ static int dma_silabs_init(const struct device *dev)
 	const struct dma_silabs_config *config = dev->config;
 
 	/* Clock is managed by em_ldma */
-	DMADRV_Init();
+	sl_dma_manager_init(config->handle, config->handle->dma_peripheral);
 
 	/* LDMA_Init configure IRQ but we want IRQ to match with configured one in the dts*/
 	config->config_irq(dev);
@@ -608,6 +618,27 @@ int silabs_ldma_append_block(const struct device *dev, uint32_t channel, struct 
 #define CONFIGURE_ALL_IRQS(inst, n) LISTIFY(n, SILABS_DMA_IRQ_CONNECT, (), inst)
 
 #define DMA_SILABS_LDMA_INIT(inst)                                                                 \
+	static const uint32_t ldma_bus_clock_##inst = DT_INST_CLOCKS_CELL(inst, enable);           \
+	static const sl_peripheral_dma_val_t ldma_peripheral_##inst = {                            \
+		.base = DT_INST_REG_ADDR(inst),                                                    \
+		.clk_branch = DT_INST_CLOCKS_CELL(inst, branch),                                   \
+		.bus_clock =                                                                       \
+			(DT_INST_CLOCKS_CELL(inst, enable) != 0xFFFFFFFFU ? &ldma_bus_clock_##inst \
+									  : NULL),                 \
+		.dual_destination_map = 0,                                                         \
+		.rule_based_interleaving_map = 0,                                                  \
+		.nbr_channel = DT_INST_PROP(inst, dma_channels),                                   \
+		.nbr_sync = DT_INST_PROP(inst, dma_channels),                                      \
+	};                                                                                         \
+	static sl_dma_manager_channel_irq_callback_t                                               \
+		*ldma_cb_##inst[DT_INST_PROP(inst, dma_channels)];                                 \
+	static void *ldma_user_data_##inst[DT_INST_PROP(inst, dma_channels)];                      \
+	static struct sl_dma_handle ldma_handle_##inst = {                                         \
+		.dma_peripheral = &ldma_peripheral_##inst,                                         \
+		.channel_irq_callbacks_table =                                                     \
+			(sl_dma_manager_channel_irq_callback_t *)&ldma_cb_##inst,                  \
+		.channel_user_data_table = (void **)&ldma_user_data_##inst,                        \
+	};                                                                                         \
                                                                                                    \
 	static void silabs_dma_irq_configure_##inst(const struct device *dev)                      \
 	{                                                                                          \
@@ -616,6 +647,7 @@ int silabs_ldma_append_block(const struct device *dev, uint32_t channel, struct 
 	};                                                                                         \
                                                                                                    \
 	const struct dma_silabs_config dma_silabs_config_##inst = {                                \
+		.handle = &ldma_handle_##inst,                                                     \
 		.config_irq = silabs_dma_irq_configure_##inst                                      \
 	};                                                                                         \
                                                                                                    \
