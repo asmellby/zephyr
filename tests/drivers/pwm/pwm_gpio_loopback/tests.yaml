@@ -59,6 +59,8 @@ tests:
     platform_allow:
       - xg29_rb4412a
       - bg29_rb4420a
+      - xg23_rb4210a
+      - xg24_rb4186c
       - xg24_rb4187c
       - kg100s_rb4332a
       - sixg301_rb4407a
