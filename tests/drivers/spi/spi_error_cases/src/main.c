@@ -88,7 +88,7 @@ ZTEST(spi_error_cases, test_SPI_OP_MODE_invalid)
 	struct spi_config spis_config_invalid = spis_config;
 
 	spim_invalid.config.operation |= SPI_OP_MODE_PERIPHERAL;
-	spis_config_invalid.operation &= !SPI_OP_MODE_PERIPHERAL;
+	spis_config_invalid.operation &= ~SPI_OP_MODE_PERIPHERAL;
 
 	/* Check that Operation Mode Peripheral on spim is not supported */
 	rv = spi_transceive_dt(&spim_invalid, tdata.stx_set, tdata.srx_set);
