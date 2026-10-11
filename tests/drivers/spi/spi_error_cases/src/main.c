@@ -96,7 +96,7 @@ ZTEST(spi_error_cases, test_SPI_OP_MODE_PERIPHERAL_not_supported)
 
 	/* Check that Operation Mode Peripheral on spim is not supported */
 	rv = spi_transceive_dt(&spim_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(rv, -EINVAL, "Got %d instead", rv);
+	zassert_equal(rv, -ENOTSUP, "Got %d instead", rv);
 }
 
 ZTEST(spi_error_cases, test_SPI_OP_MODE_CONTROLLER_not_supported)
@@ -112,7 +112,7 @@ ZTEST(spi_error_cases, test_SPI_OP_MODE_CONTROLLER_not_supported)
 	/* Check that Operation Mode Controller on spis is not supported */
 	peripheral_rv =
 		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
+	zassert_equal(peripheral_rv, -ENOTSUP, "Got %d instead", peripheral_rv);
 }
 
 ZTEST(spi_error_cases, test_SPI_MODE_LOOP_not_supported)
@@ -130,10 +130,10 @@ ZTEST(spi_error_cases, test_SPI_MODE_LOOP_not_supported)
 	spis_config_invalid.operation |= SPI_MODE_LOOP;
 
 	rv = spi_transceive_dt(&spim_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(rv, -EINVAL, "Got %d instead", rv);
+	zassert_equal(rv, -ENOTSUP, "Got %d instead", rv);
 	peripheral_rv =
 		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
+	zassert_equal(peripheral_rv, -ENOTSUP, "Got %d instead", peripheral_rv);
 }
 
 ZTEST(spi_error_cases, test_SPI_LINES_DUAL_not_supported)
@@ -152,10 +152,10 @@ ZTEST(spi_error_cases, test_SPI_LINES_DUAL_not_supported)
 	spis_config_invalid.operation |= SPI_LINES_DUAL;
 
 	rv = spi_transceive_dt(&spim_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(rv, -EINVAL, "Got %d instead", rv);
+	zassert_equal(rv, -ENOTSUP, "Got %d instead", rv);
 	peripheral_rv =
 		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
+	zassert_equal(peripheral_rv, -ENOTSUP, "Got %d instead", peripheral_rv);
 }
 
 ZTEST(spi_error_cases, test_SPI_LINES_QUAD_not_supported)
@@ -174,10 +174,10 @@ ZTEST(spi_error_cases, test_SPI_LINES_QUAD_not_supported)
 	spis_config_invalid.operation |= SPI_LINES_QUAD;
 
 	rv = spi_transceive_dt(&spim_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(rv, -EINVAL, "Got %d instead", rv);
+	zassert_equal(rv, -ENOTSUP, "Got %d instead", rv);
 	peripheral_rv =
 		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
+	zassert_equal(peripheral_rv, -ENOTSUP, "Got %d instead", peripheral_rv);
 }
 
 ZTEST(spi_error_cases, test_SPI_LINES_OCTAL_not_supported)
@@ -196,10 +196,10 @@ ZTEST(spi_error_cases, test_SPI_LINES_OCTAL_not_supported)
 	spis_config_invalid.operation |= SPI_LINES_OCTAL;
 
 	rv = spi_transceive_dt(&spim_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(rv, -EINVAL, "Got %d instead", rv);
+	zassert_equal(rv, -ENOTSUP, "Got %d instead", rv);
 	peripheral_rv =
 		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
+	zassert_equal(peripheral_rv, -ENOTSUP, "Got %d instead", peripheral_rv);
 }
 
 ZTEST(spi_error_cases, test_only_8BIT_supported)
@@ -217,10 +217,10 @@ ZTEST(spi_error_cases, test_only_8BIT_supported)
 	spis_config_invalid.operation |= SPI_WORD_SET(16);
 
 	rv = spi_transceive_dt(&spim_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(rv, -EINVAL, "Got %d instead", rv);
+	zassert_equal(rv, -ENOTSUP, "Got %d instead", rv);
 	peripheral_rv =
 		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
-	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
+	zassert_equal(peripheral_rv, -ENOTSUP, "Got %d instead", peripheral_rv);
 }
 
 ZTEST(spi_error_cases, test_unsupported_frequency)

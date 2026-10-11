@@ -87,28 +87,28 @@ static int configure(const struct device *dev,
 
 	if (SPI_OP_MODE_GET(spi_cfg->operation) == SPI_OP_MODE_CONTROLLER) {
 		LOG_ERR("Controller mode is not supported on %s", dev->name);
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 
 	if (spi_cfg->operation & SPI_MODE_LOOP) {
 		LOG_ERR("Loopback mode is not supported");
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 
 	if (IS_ENABLED(CONFIG_SPI_EXTENDED_MODES) &&
 	    (spi_cfg->operation & SPI_LINES_MASK) != SPI_LINES_SINGLE) {
 		LOG_ERR("Only single line mode is supported");
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 
 	if (SPI_WORD_SIZE_GET(spi_cfg->operation) != 8) {
 		LOG_ERR("Word sizes other than 8 bits are not supported");
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 
 	if (spi_cs_is_gpio(spi_cfg)) {
 		LOG_ERR("CS control via GPIO is not supported");
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 
 	ctx->config = spi_cfg;

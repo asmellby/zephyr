@@ -495,23 +495,23 @@ int spi_nrfx_spim_common_configure(const struct device *dev, const struct spi_co
 
 	if (SPI_OP_MODE_GET(spi_cfg->operation) != SPI_OP_MODE_CONTROLLER) {
 		LOG_ERR("Peripheral mode is not supported on %s", dev->name);
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 
 	if (spi_cfg->operation & SPI_MODE_LOOP) {
 		LOG_ERR("Loopback mode is not supported");
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 
 	if (IS_ENABLED(CONFIG_SPI_EXTENDED_MODES) &&
 	    (spi_cfg->operation & SPI_LINES_MASK) != SPI_LINES_SINGLE) {
 		LOG_ERR("Only single line mode is supported");
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 
 	if (SPI_WORD_SIZE_GET(spi_cfg->operation) != 8) {
 		LOG_ERR("Word sizes other than 8 bits are not supported");
-		return -EINVAL;
+		return -ENOTSUP;
 	}
 
 	if (spi_cfg->frequency < KHZ(125)) {
