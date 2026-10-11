@@ -16,7 +16,11 @@ tests:
       - nrf52_bsim
       - nrf54l15bsim/nrf54l15/cpuapp
       - sixg301_rb4407a
+      - xg23_rb4210a
+      - xg24_rb4186c
       - xg24_rb4187c
+      - xg26_rb4118a
+      - xg28_rb4401c
   drivers.uart.async_dual.busy_sim:
     harness: ztest
     harness_config:

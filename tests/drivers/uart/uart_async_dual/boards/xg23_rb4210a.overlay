@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2026 Silicon Laboratories Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
+ * Connect EXP[4,6,8,10] with EXP[7,9,11,13] on the Expansion Pin header
+ */
+/ {
+	chosen {
+		/delete-property/ zephyr,display;
+	};
+};
+
+/delete-node/ &ls0xx_ls013b7dh03;
+/delete-node/ &mx25r80;
+
+&pinctrl {
+	eusart1_default: eusart1_default {
+		group0 {
+			pins = <EUSART1_TX_PD2>, <EUSART1_RTS_PA7>;
+			drive-push-pull;
+			output-high;
+		};
+
+		group1 {
+			pins = <EUSART1_RX_PA5>, <EUSART1_CTS_PA6>;
+			input-enable;
+			silabs,input-filter;
+		};
+	};
+
+	eusart2_default: eusart2_default {
+		group0 {
+			pins = <EUSART2_TX_PC1>, <EUSART2_RTS_PC3>;
+			drive-push-pull;
+			output-high;
+		};
+
+		group1 {
+			pins = <EUSART2_RX_PC2>, <EUSART2_CTS_PC0>;
+			input-enable;
+			silabs,input-filter;
+		};
+	};
+};
+
+dut: &eusart1 {
+	compatible = "silabs,eusart-uart";
+	current-speed = <115200>;
+	dmas = <&dma0 DMA_REQSEL_EUSART1TXFL>,
+	       <&dma0 DMA_REQSEL_EUSART1RXFL>;
+	dma-names = "tx", "rx";
+	pinctrl-0 = <&eusart1_default>;
+	pinctrl-names = "default";
+	status = "okay";
+
+	/delete-property/ cs-gpios;
+	/delete-property/ clock-frequency;
+};
+
+dut_aux: &eusart2 {
+	compatible = "silabs,eusart-uart";
+	current-speed = <115200>;
+	dmas = <&dma0 DMA_REQSEL_EUSART2TXFL>,
+	       <&dma0 DMA_REQSEL_EUSART2RXFL>;
+	dma-names = "tx", "rx";
+	pinctrl-0 = <&eusart2_default>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&dma0 {
+	status = "okay";
+};
