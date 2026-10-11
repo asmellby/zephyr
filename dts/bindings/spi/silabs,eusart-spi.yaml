@@ -5,6 +5,75 @@ description: |
   EUSART (Enhanced Universal Synchronous/Asynchronous Receiver/Transmitter) peripheral for
   Silicon Labs Series 2 SoCs used in SPI mode.
 
+  The TX signal is MOSI and the RX signal is MISO in both controller and peripheral mode,
+  so a peripheral receives on TX and transmits on RX. In peripheral mode, the CS signal must
+  be routed through pinctrl, and the instance needs DMA channels configured with dmas and
+  dma-names.
+
+examples:
+  - |
+    /* Controller mode with a GPIO chip select and DMA */
+    &pinctrl {
+      eusart1_default: eusart1_default {
+        group0 {
+          pins = <EUSART1_TX_PC1>, <EUSART1_SCLK_PC3>;
+          drive-push-pull;
+          output-high;
+        };
+
+        group1 {
+          pins = <EUSART1_RX_PC2>;
+          input-enable;
+        };
+      };
+    };
+
+    &eusart1 {
+      compatible = "silabs,eusart-spi";
+      #address-cells = <1>;
+      #size-cells = <0>;
+      pinctrl-0 = <&eusart1_default>;
+      pinctrl-names = "default";
+      cs-gpios = <&gpioc 0 GPIO_ACTIVE_LOW>;
+      dmas = <&dma0 DMA_REQSEL_EUSART1TXFL>, <&dma0 DMA_REQSEL_EUSART1RXFL>;
+      dma-names = "tx", "rx";
+      status = "okay";
+
+      sensor@0 {
+        compatible = "vnd,spi-device";
+        reg = <0>;
+        spi-max-frequency = <DT_FREQ_M(1)>;
+      };
+    };
+
+  - |
+    /* Peripheral mode: TX is the MOSI input, RX is the MISO output and CS is routed through
+     * pinctrl. DMA is required.
+     */
+    &pinctrl {
+      eusart1_default: eusart1_default {
+        group0 {
+          pins = <EUSART1_RX_PC0>;
+          drive-push-pull;
+          output-high;
+        };
+
+        group1 {
+          pins = <EUSART1_TX_PC1>, <EUSART1_SCLK_PC3>, <EUSART1_CS_PC2>;
+          input-enable;
+        };
+      };
+    };
+
+    &eusart1 {
+      compatible = "silabs,eusart-spi";
+      pinctrl-0 = <&eusart1_default>;
+      pinctrl-names = "default";
+      dmas = <&dma0 DMA_REQSEL_EUSART1TXFL>, <&dma0 DMA_REQSEL_EUSART1RXFL>;
+      dma-names = "tx", "rx";
+      status = "okay";
+    };
+
 compatible: "silabs,eusart-spi"
 
 include: [spi-controller.yaml, pinctrl-device.yaml]
