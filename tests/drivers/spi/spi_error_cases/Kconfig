@@ -14,6 +14,7 @@ config TEST_SPI_HALF_DUPLEX_SUPPORTED
 
 config TEST_SPI_MODE_LOOP_SUPPORTED
 	bool "Driver supports SPI_MODE_LOOP"
+	default y if SPI_SILABS_EUSART
 	help
 	  Set this Kconfig to 'y' if both the controller and the peripheral accept
 	  operation=SPI_MODE_LOOP.
@@ -44,12 +45,14 @@ config TEST_SPI_WORD_SIZE_16_SUPPORTED
 
 config TEST_SPI_CONTROLLER_INSTANCE_PERIPHERAL_SUPPORTED
 	bool "Controller instance also supports peripheral mode"
+	default y if SPI_SILABS_EUSART
 	help
 	  Set this Kconfig to 'y' if the instance used as controller also accepts
 	  operation=SPI_OP_MODE_PERIPHERAL.
 
 config TEST_SPI_PERIPHERAL_INSTANCE_CONTROLLER_SUPPORTED
 	bool "Peripheral instance also supports controller mode"
+	default y if SPI_SILABS_EUSART
 	help
 	  Set this Kconfig to 'y' if the instance used as peripheral also accepts
 	  operation=SPI_OP_MODE_CONTROLLER.
@@ -57,6 +60,7 @@ config TEST_SPI_PERIPHERAL_INSTANCE_CONTROLLER_SUPPORTED
 config TEST_SPI_UNSUPPORTED_FREQUENCY
 	int "Controller frequency that the driver must reject"
 	default 124999 if SPI_NRFX_SPIM
+	default 1000 if SPI_SILABS_EUSART
 	default 0
 	help
 	  Frequency in Hz that is outside of the range supported by the controller.
@@ -65,6 +69,7 @@ config TEST_SPI_UNSUPPORTED_FREQUENCY
 
 config TEST_SPI_PERIPHERAL_UNSUPPORTED_FREQUENCY
 	int "Peripheral frequency that the driver must reject"
+	default 10000001 if SPI_SILABS_EUSART
 	default 0
 	help
 	  Frequency in Hz that is higher than the peripheral can receive. Set to 0
@@ -73,6 +78,7 @@ config TEST_SPI_PERIPHERAL_UNSUPPORTED_FREQUENCY
 
 config TEST_SPI_PERIPHERAL_SCATTERED_BUFFERS_SUPPORTED
 	bool "Peripheral supports buffer sets with more than one buffer"
+	default y if SPI_SILABS_EUSART
 	help
 	  Set this Kconfig to 'y' if the peripheral accepts TX and RX buffer sets
 	  with more than one buffer.

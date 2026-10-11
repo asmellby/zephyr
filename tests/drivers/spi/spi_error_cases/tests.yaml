@@ -21,6 +21,11 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf7120dk/nrf7120/cpuapp
       - ophelia4ev/nrf54l15/cpuapp
+      - sixg301_rb4407a
+      - xg23_rb4210a
+      - xg24_rb4186c
+      - xg26_rb4118a
+      - xg28_rb4401c
     integration_platforms:
       - nrf52840dk/nrf52840
   drivers.spi.spi_error_cases.fast:
