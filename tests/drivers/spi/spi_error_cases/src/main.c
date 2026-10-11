@@ -67,9 +67,11 @@ ZTEST(spi_error_cases, test_SPI_HALF_DUPLEX_not_supported)
 {
 	int rv;
 	int peripheral_rv;
-	struct spi_dt_spec spim_invalid = spim;
-	struct spi_config spis_config_invalid = spis_config;
+	static struct spi_dt_spec spim_invalid;
+	static struct spi_config spis_config_invalid;
 
+	spim_invalid = spim;
+	spis_config_invalid = spis_config;
 	spim_invalid.config.operation |= SPI_HALF_DUPLEX;
 	spis_config_invalid.operation |= SPI_HALF_DUPLEX;
 
@@ -80,19 +82,27 @@ ZTEST(spi_error_cases, test_SPI_HALF_DUPLEX_not_supported)
 	zassert_equal(peripheral_rv, -ENOTSUP, "Got %d instead", peripheral_rv);
 }
 
-ZTEST(spi_error_cases, test_SPI_OP_MODE_invalid)
+ZTEST(spi_error_cases, test_SPI_OP_MODE_PERIPHERAL_not_supported)
 {
 	int rv;
-	int peripheral_rv;
-	struct spi_dt_spec spim_invalid = spim;
-	struct spi_config spis_config_invalid = spis_config;
+	static struct spi_dt_spec spim_invalid;
 
+	spim_invalid = spim;
 	spim_invalid.config.operation |= SPI_OP_MODE_PERIPHERAL;
-	spis_config_invalid.operation &= ~SPI_OP_MODE_PERIPHERAL;
 
 	/* Check that Operation Mode Peripheral on spim is not supported */
 	rv = spi_transceive_dt(&spim_invalid, tdata.stx_set, tdata.srx_set);
 	zassert_equal(rv, -EINVAL, "Got %d instead", rv);
+}
+
+ZTEST(spi_error_cases, test_SPI_OP_MODE_CONTROLLER_not_supported)
+{
+	int peripheral_rv;
+	static struct spi_config spis_config_invalid;
+
+	spis_config_invalid = spis_config;
+	spis_config_invalid.operation &= ~SPI_OP_MODE_PERIPHERAL;
+
 	/* Check that Operation Mode Controller on spis is not supported */
 	peripheral_rv =
 		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
@@ -103,9 +113,11 @@ ZTEST(spi_error_cases, test_SPI_MODE_LOOP_not_supported)
 {
 	int rv;
 	int peripheral_rv;
-	struct spi_dt_spec spim_invalid = spim;
-	struct spi_config spis_config_invalid = spis_config;
+	static struct spi_dt_spec spim_invalid;
+	static struct spi_config spis_config_invalid;
 
+	spim_invalid = spim;
+	spis_config_invalid = spis_config;
 	spim_invalid.config.operation |= SPI_MODE_LOOP;
 	spis_config_invalid.operation |= SPI_MODE_LOOP;
 
@@ -116,13 +128,15 @@ ZTEST(spi_error_cases, test_SPI_MODE_LOOP_not_supported)
 	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
 }
 
-ZTEST(spi_error_cases, test_only_SPI_LINES_SINGLE_supported)
+ZTEST(spi_error_cases, test_SPI_LINES_DUAL_not_supported)
 {
 	int rv;
 	int peripheral_rv;
-	struct spi_dt_spec spim_invalid = spim;
-	struct spi_config spis_config_invalid = spis_config;
+	static struct spi_dt_spec spim_invalid;
+	static struct spi_config spis_config_invalid;
 
+	spim_invalid = spim;
+	spis_config_invalid = spis_config;
 	spim_invalid.config.operation |= SPI_LINES_DUAL;
 	spis_config_invalid.operation |= SPI_LINES_DUAL;
 
@@ -131,6 +145,14 @@ ZTEST(spi_error_cases, test_only_SPI_LINES_SINGLE_supported)
 	peripheral_rv =
 		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
 	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
+}
+
+ZTEST(spi_error_cases, test_SPI_LINES_QUAD_not_supported)
+{
+	int rv;
+	int peripheral_rv;
+	static struct spi_dt_spec spim_invalid;
+	static struct spi_config spis_config_invalid;
 
 	spim_invalid = spim;
 	spis_config_invalid = spis_config;
@@ -142,6 +164,14 @@ ZTEST(spi_error_cases, test_only_SPI_LINES_SINGLE_supported)
 	peripheral_rv =
 		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
 	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
+}
+
+ZTEST(spi_error_cases, test_SPI_LINES_OCTAL_not_supported)
+{
+	int rv;
+	int peripheral_rv;
+	static struct spi_dt_spec spim_invalid;
+	static struct spi_config spis_config_invalid;
 
 	spim_invalid = spim;
 	spis_config_invalid = spis_config;
@@ -159,9 +189,11 @@ ZTEST(spi_error_cases, test_only_8BIT_supported)
 {
 	int rv;
 	int peripheral_rv;
-	struct spi_dt_spec spim_invalid = spim;
-	struct spi_config spis_config_invalid = spis_config;
+	static struct spi_dt_spec spim_invalid;
+	static struct spi_config spis_config_invalid;
 
+	spim_invalid = spim;
+	spis_config_invalid = spis_config;
 	spim_invalid.config.operation |= SPI_WORD_SET(16);
 	spis_config_invalid.operation |= SPI_WORD_SET(16);
 
@@ -175,13 +207,15 @@ ZTEST(spi_error_cases, test_only_8BIT_supported)
 ZTEST(spi_error_cases, test_unsupported_frequency)
 {
 	int rv;
-	struct spi_dt_spec spim_invalid = spim;
+	static struct spi_dt_spec spim_invalid;
 
+	spim_invalid = spim;
 	spim_invalid.config.frequency = 124999;
 
 	rv = spi_transceive_dt(&spim_invalid, tdata.stx_set, tdata.srx_set);
 	zassert_equal(rv, -EINVAL, "Got %d instead", rv);
 }
+
 
 ZTEST(spi_error_cases, test_spis_scattered_tx_buf_not_supported)
 {
