@@ -1,0 +1,96 @@
+# Copyright (c) 2026 Silicon Laboratories Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Capabilities of the tested SPI drivers that select the error cases valid on
+# a given platform. A test case that checks that an unsupported configuration
+# is rejected is skipped when the driver supports that configuration.
+
+config TEST_SPI_HALF_DUPLEX_SUPPORTED
+	bool "Driver supports SPI_HALF_DUPLEX"
+	help
+	  Set this Kconfig to 'y' if both the controller and the peripheral accept
+	  operation=SPI_HALF_DUPLEX.
+
+config TEST_SPI_MODE_LOOP_SUPPORTED
+	bool "Driver supports SPI_MODE_LOOP"
+	help
+	  Set this Kconfig to 'y' if both the controller and the peripheral accept
+	  operation=SPI_MODE_LOOP.
+
+config TEST_SPI_LINES_DUAL_SUPPORTED
+	bool "Driver supports SPI_LINES_DUAL"
+	help
+	  Set this Kconfig to 'y' if both the controller and the peripheral accept
+	  operation=SPI_LINES_DUAL.
+
+config TEST_SPI_LINES_QUAD_SUPPORTED
+	bool "Driver supports SPI_LINES_QUAD"
+	help
+	  Set this Kconfig to 'y' if both the controller and the peripheral accept
+	  operation=SPI_LINES_QUAD.
+
+config TEST_SPI_LINES_OCTAL_SUPPORTED
+	bool "Driver supports SPI_LINES_OCTAL"
+	help
+	  Set this Kconfig to 'y' if both the controller and the peripheral accept
+	  operation=SPI_LINES_OCTAL.
+
+config TEST_SPI_WORD_SIZE_16_SUPPORTED
+	bool "Driver supports 16-bit words"
+	help
+	  Set this Kconfig to 'y' if both the controller and the peripheral accept
+	  operation=SPI_WORD_SET(16).
+
+config TEST_SPI_CONTROLLER_INSTANCE_PERIPHERAL_SUPPORTED
+	bool "Controller instance also supports peripheral mode"
+	help
+	  Set this Kconfig to 'y' if the instance used as controller also accepts
+	  operation=SPI_OP_MODE_PERIPHERAL.
+
+config TEST_SPI_PERIPHERAL_INSTANCE_CONTROLLER_SUPPORTED
+	bool "Peripheral instance also supports controller mode"
+	help
+	  Set this Kconfig to 'y' if the instance used as peripheral also accepts
+	  operation=SPI_OP_MODE_CONTROLLER.
+
+config TEST_SPI_UNSUPPORTED_FREQUENCY
+	int "Controller frequency that the driver must reject"
+	default 124999 if SPI_NRFX_SPIM
+	default 0
+	help
+	  Frequency in Hz that is outside of the range supported by the controller.
+	  Set to 0 if the driver supports any frequency, or adjusts unsupported
+	  frequencies, to skip the test case.
+
+config TEST_SPI_PERIPHERAL_UNSUPPORTED_FREQUENCY
+	int "Peripheral frequency that the driver must reject"
+	default 0
+	help
+	  Frequency in Hz that is higher than the peripheral can receive. Set to 0
+	  if the driver does not check the frequency in peripheral mode to skip
+	  the test case.
+
+config TEST_SPI_PERIPHERAL_SCATTERED_BUFFERS_SUPPORTED
+	bool "Peripheral supports buffer sets with more than one buffer"
+	help
+	  Set this Kconfig to 'y' if the peripheral accepts TX and RX buffer sets
+	  with more than one buffer.
+
+config TEST_SPI_PERIPHERAL_UNSUPPORTED_BUF_LEN
+	int "Peripheral buffer length that the driver must reject"
+	default 65536 if SPI_NRFX_SPIS
+	default 0
+	help
+	  Length of a single TX or RX buffer that exceeds what the peripheral
+	  supports. Set to 0 if the driver has no such limit to skip the test
+	  cases.
+
+config TEST_SPI_PERIPHERAL_RAM_BUFFERS_ONLY
+	bool "Peripheral only supports buffers in RAM"
+	default y if SPI_NRFX_SPIS
+	help
+	  Set this Kconfig to 'y' if the peripheral rejects TX buffers that are
+	  not located in RAM.
+
+source "Kconfig.zephyr"

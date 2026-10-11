@@ -70,6 +70,8 @@ ZTEST(spi_error_cases, test_SPI_HALF_DUPLEX_not_supported)
 	static struct spi_dt_spec spim_invalid;
 	static struct spi_config spis_config_invalid;
 
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_HALF_DUPLEX_SUPPORTED);
+
 	spim_invalid = spim;
 	spis_config_invalid = spis_config;
 	spim_invalid.config.operation |= SPI_HALF_DUPLEX;
@@ -87,6 +89,8 @@ ZTEST(spi_error_cases, test_SPI_OP_MODE_PERIPHERAL_not_supported)
 	int rv;
 	static struct spi_dt_spec spim_invalid;
 
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_CONTROLLER_INSTANCE_PERIPHERAL_SUPPORTED);
+
 	spim_invalid = spim;
 	spim_invalid.config.operation |= SPI_OP_MODE_PERIPHERAL;
 
@@ -99,6 +103,8 @@ ZTEST(spi_error_cases, test_SPI_OP_MODE_CONTROLLER_not_supported)
 {
 	int peripheral_rv;
 	static struct spi_config spis_config_invalid;
+
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_PERIPHERAL_INSTANCE_CONTROLLER_SUPPORTED);
 
 	spis_config_invalid = spis_config;
 	spis_config_invalid.operation &= ~SPI_OP_MODE_PERIPHERAL;
@@ -115,6 +121,8 @@ ZTEST(spi_error_cases, test_SPI_MODE_LOOP_not_supported)
 	int peripheral_rv;
 	static struct spi_dt_spec spim_invalid;
 	static struct spi_config spis_config_invalid;
+
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_MODE_LOOP_SUPPORTED);
 
 	spim_invalid = spim;
 	spis_config_invalid = spis_config;
@@ -135,6 +143,9 @@ ZTEST(spi_error_cases, test_SPI_LINES_DUAL_not_supported)
 	static struct spi_dt_spec spim_invalid;
 	static struct spi_config spis_config_invalid;
 
+	Z_TEST_SKIP_IFNDEF(CONFIG_SPI_EXTENDED_MODES);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_LINES_DUAL_SUPPORTED);
+
 	spim_invalid = spim;
 	spis_config_invalid = spis_config;
 	spim_invalid.config.operation |= SPI_LINES_DUAL;
@@ -153,6 +164,9 @@ ZTEST(spi_error_cases, test_SPI_LINES_QUAD_not_supported)
 	int peripheral_rv;
 	static struct spi_dt_spec spim_invalid;
 	static struct spi_config spis_config_invalid;
+
+	Z_TEST_SKIP_IFNDEF(CONFIG_SPI_EXTENDED_MODES);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_LINES_QUAD_SUPPORTED);
 
 	spim_invalid = spim;
 	spis_config_invalid = spis_config;
@@ -173,6 +187,9 @@ ZTEST(spi_error_cases, test_SPI_LINES_OCTAL_not_supported)
 	static struct spi_dt_spec spim_invalid;
 	static struct spi_config spis_config_invalid;
 
+	Z_TEST_SKIP_IFNDEF(CONFIG_SPI_EXTENDED_MODES);
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_LINES_OCTAL_SUPPORTED);
+
 	spim_invalid = spim;
 	spis_config_invalid = spis_config;
 	spim_invalid.config.operation |= SPI_LINES_OCTAL;
@@ -192,6 +209,8 @@ ZTEST(spi_error_cases, test_only_8BIT_supported)
 	static struct spi_dt_spec spim_invalid;
 	static struct spi_config spis_config_invalid;
 
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_WORD_SIZE_16_SUPPORTED);
+
 	spim_invalid = spim;
 	spis_config_invalid = spis_config;
 	spim_invalid.config.operation |= SPI_WORD_SET(16);
@@ -209,6 +228,10 @@ ZTEST(spi_error_cases, test_unsupported_frequency)
 	int rv;
 	static struct spi_dt_spec spim_invalid;
 
+	if (CONFIG_TEST_SPI_UNSUPPORTED_FREQUENCY == 0) {
+		ztest_test_skip();
+	}
+
 	spim_invalid = spim;
 	spim_invalid.config.frequency = 124999;
 
@@ -216,10 +239,28 @@ ZTEST(spi_error_cases, test_unsupported_frequency)
 	zassert_equal(rv, -EINVAL, "Got %d instead", rv);
 }
 
+ZTEST(spi_error_cases, test_spis_unsupported_frequency)
+{
+	int peripheral_rv;
+	static struct spi_config spis_config_invalid;
+
+	if (CONFIG_TEST_SPI_PERIPHERAL_UNSUPPORTED_FREQUENCY == 0) {
+		ztest_test_skip();
+	}
+
+	spis_config_invalid = spis_config;
+	spis_config_invalid.frequency = CONFIG_TEST_SPI_PERIPHERAL_UNSUPPORTED_FREQUENCY;
+
+	peripheral_rv =
+		spi_transceive(spis_dev, &spis_config_invalid, tdata.stx_set, tdata.srx_set);
+	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
+}
 
 ZTEST(spi_error_cases, test_spis_scattered_tx_buf_not_supported)
 {
 	int peripheral_rv;
+
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_PERIPHERAL_SCATTERED_BUFFERS_SUPPORTED);
 
 	tdata.sets[2].count = 2;
 	peripheral_rv = spi_transceive(spis_dev, &spis_config, tdata.stx_set, tdata.srx_set);
@@ -230,6 +271,8 @@ ZTEST(spi_error_cases, test_spis_scattered_rx_buf_not_supported)
 {
 	int peripheral_rv;
 
+	Z_TEST_SKIP_IFDEF(CONFIG_TEST_SPI_PERIPHERAL_SCATTERED_BUFFERS_SUPPORTED);
+
 	tdata.sets[3].count = 2;
 	peripheral_rv = spi_transceive(spis_dev, &spis_config, tdata.stx_set, tdata.srx_set);
 	zassert_equal(peripheral_rv, -ENOTSUP, "Got %d instead", peripheral_rv);
@@ -239,7 +282,11 @@ ZTEST(spi_error_cases, test_spis_tx_buf_too_big)
 {
 	int peripheral_rv;
 
-	tdata.bufs[2].len = (size_t)65536;
+	if (CONFIG_TEST_SPI_PERIPHERAL_UNSUPPORTED_BUF_LEN == 0) {
+		ztest_test_skip();
+	}
+
+	tdata.bufs[2].len = (size_t)CONFIG_TEST_SPI_PERIPHERAL_UNSUPPORTED_BUF_LEN;
 	peripheral_rv = spi_transceive(spis_dev, &spis_config, tdata.stx_set, tdata.srx_set);
 	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
 }
@@ -248,7 +295,11 @@ ZTEST(spi_error_cases, test_spis_rx_buf_too_big)
 {
 	int peripheral_rv;
 
-	tdata.bufs[3].len = (size_t)65536;
+	if (CONFIG_TEST_SPI_PERIPHERAL_UNSUPPORTED_BUF_LEN == 0) {
+		ztest_test_skip();
+	}
+
+	tdata.bufs[3].len = (size_t)CONFIG_TEST_SPI_PERIPHERAL_UNSUPPORTED_BUF_LEN;
 	peripheral_rv = spi_transceive(spis_dev, &spis_config, tdata.stx_set, tdata.srx_set);
 	zassert_equal(peripheral_rv, -EINVAL, "Got %d instead", peripheral_rv);
 }
@@ -256,6 +307,8 @@ ZTEST(spi_error_cases, test_spis_rx_buf_too_big)
 ZTEST(spi_error_cases, test_spis_tx_buf_not_in_ram)
 {
 	int peripheral_rv;
+
+	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_SPI_PERIPHERAL_RAM_BUFFERS_ONLY);
 
 	tdata.bufs[2].buf = (void *)0x12345678;
 	peripheral_rv = spi_transceive(spis_dev, &spis_config, tdata.stx_set, tdata.srx_set);
