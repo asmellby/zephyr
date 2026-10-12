@@ -559,6 +559,17 @@
 			status = "disabled";
 		};
 
+		pdm0: pdm@50098000 {
+			compatible = "silabs,pdm";
+			reg = <0x50098000 0x4000>;
+			clocks = <&cmu CLOCK_PDM CLOCK_BRANCH_EM01GRPBCLK>;
+			dmas = <&dma0 DMA_REQSEL_PDMRXDATAV>;
+			dma-names = "rx";
+			interrupt-names = "pdm";
+			interrupts = <57 2>;
+			status = "disabled";
+		};
+
 		rtcc0: rtcc@58000000 {
 			compatible = "silabs,rtcc";
 			reg = <0x58000000 0x4000>;
