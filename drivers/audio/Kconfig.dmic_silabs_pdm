@@ -1,0 +1,25 @@
+# Copyright (c) 2026 Silicon Laboratories Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+config AUDIO_DMIC_SILABS_PDM
+	bool "Silicon Labs PDM driver"
+	default y
+	depends on DT_HAS_SILABS_PDM_ENABLED
+	depends on CLOCK_CONTROL
+	select DMA
+	select PINCTRL
+	select SILABS_SISDK_PDM
+	help
+	  Enable support for the PDM peripheral on Silicon Labs Series 2 SoCs.
+
+if AUDIO_DMIC_SILABS_PDM
+
+config AUDIO_DMIC_SILABS_PDM_QUEUE_SIZE
+	int "Received blocks queued to the application"
+	default 4
+	range 1 64
+	help
+	  Number of filled blocks waiting for dmic_read(). Blocks are dropped once the queue is
+	  full.
+
+endif # AUDIO_DMIC_SILABS_PDM
