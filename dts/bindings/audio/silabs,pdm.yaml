@@ -1,0 +1,60 @@
+# Copyright (c) 2026 Silicon Laboratories Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+title: Silicon Labs PDM (Pulse Density Modulation)
+
+description: |
+  PDM (Pulse Density Modulation) interface for Silicon Labs Series 2 SoCs.
+
+  The PDM peripheral decimates the bitstream from up to two digital microphones sharing one
+  clock and one data line into PCM samples. The left microphone is sampled on the rising edge
+  of the PDM clock, and the right microphone on the falling edge.
+
+  Received samples are moved to memory using LDMA, so the node must reference a DMA channel
+  named "rx".
+
+examples:
+  - |
+    &pinctrl {
+      pdm0_default: pdm0_default {
+        group0 {
+          pins = <PDM_CLK_PB0>;
+          drive-push-pull;
+          output-low;
+        };
+
+        group1 {
+          pins = <PDM_DAT0_PB1>;
+          input-enable;
+        };
+      };
+    };
+
+    &pdm0 {
+      pinctrl-0 = <&pdm0_default>;
+      pinctrl-names = "default";
+      status = "okay";
+    };
+
+compatible: "silabs,pdm"
+
+include: [base.yaml, pinctrl-device.yaml]
+
+properties:
+  reg:
+    required: true
+
+  clocks:
+    required: true
+
+  dmas:
+    required: true
+
+  dma-names:
+    required: true
+
+  pinctrl-0:
+    required: true
+
+  pinctrl-names:
+    required: true
