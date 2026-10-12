@@ -27,6 +27,16 @@
 	enable-gpios = <&gpioc 7 GPIO_ACTIVE_HIGH>;
 };
 
+&pdm0_default {
+	group0 {
+		pins = <PDM_CLK_PB0>;
+	};
+
+	group1 {
+		pins = <PDM_DAT0_PB1>;
+	};
+};
+
 &timer0_default {
 	pins = <TIMER0_CC0_PA4>;
 };

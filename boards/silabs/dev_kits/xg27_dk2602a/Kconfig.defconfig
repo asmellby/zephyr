@@ -25,6 +25,6 @@ config MAIN_STACK_SIZE
 endif # BT
 
 config REGULATOR
-	default y if SI7210
+	default y if SI7210 || AUDIO_DMIC
 
 endif
