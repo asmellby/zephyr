@@ -27,6 +27,6 @@ config TEST_HW_CHANNEL_INDEX
 
 config TEST_SMALL_BUFFER
 	bool "Use a smaller buffer for testing"
-	default y if DT_HAS_RENESAS_RA_PDM_ENABLED
+	default y if DT_HAS_RENESAS_RA_PDM_ENABLED || DT_HAS_SILABS_PDM_ENABLED
 	help
 	  Use a smaller buffer for testing. This is useful if your device has limited memory.

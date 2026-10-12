@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Silicon Laboratories Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+	aliases {
+		dmic0 = &pdm0;
+	};
+};
+
+&sw_mic_enable {
+	regulator-boot-on;
+};
