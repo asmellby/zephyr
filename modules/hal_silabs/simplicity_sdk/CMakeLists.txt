@@ -459,6 +459,7 @@ if(CONFIG_SILABS_SISDK_LDMA)
 endif()
 
 zephyr_library_sources_ifdef(CONFIG_SILABS_SISDK_MSC       ${emlib_dir}/src/em_msc.c)
+zephyr_library_sources_ifdef(CONFIG_SILABS_SISDK_PDM       ${peripheral_dir}/src/sl_hal_pdm.c)
 zephyr_library_sources_ifdef(CONFIG_SILABS_SISDK_RMU       ${emlib_dir}/src/em_rmu.c)
 zephyr_library_sources_ifdef(CONFIG_SILABS_SISDK_RTCC      ${emlib_dir}/src/em_rtcc.c)
 zephyr_library_sources_ifdef(CONFIG_SILABS_SISDK_USART     ${emlib_dir}/src/em_usart.c)

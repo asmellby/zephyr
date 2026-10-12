@@ -48,6 +48,9 @@ config SILABS_SISDK_LETIMER
 config SILABS_SISDK_MSC
 	bool "Peripheral HAL for MSC"
 
+config SILABS_SISDK_PDM
+	bool "Peripheral HAL for PDM"
+
 config SILABS_SISDK_PRS
 	bool "Peripheral HAL for PRS"
 
