@@ -49,8 +49,12 @@ ZTEST(interrupt_feature, test_isr_dynamic)
 	int i;
 	const void *argval;
 
+	/* An IRQ with a direct ISR (IRQ_DIRECT_CONNECT) has no software ISR table entry, but may
+	 * already be enabled, so skip enabled IRQs as well.
+	 */
 	for (i = 0; i < (CONFIG_NUM_IRQS - CONFIG_GEN_IRQ_START_VECTOR); i++) {
-		if (_sw_isr_table[i].isr == z_irq_spurious) {
+		if (_sw_isr_table[i].isr == z_irq_spurious &&
+		    !irq_is_enabled(i + CONFIG_GEN_IRQ_START_VECTOR)) {
 			break;
 		}
 	}

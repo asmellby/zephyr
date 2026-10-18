@@ -55,7 +55,8 @@ static unsigned int get_irq_slot(unsigned int start)
 	for (i = start; i <= CONFIG_GEN_IRQ_START_VECTOR + CONFIG_NUM_IRQS - 1; i++) {
 		table_idx = i - CONFIG_GEN_IRQ_START_VECTOR;
 
-		if (_sw_isr_table[table_idx].isr == &z_irq_spurious) {
+		/* skip IRQs that are enabled with a direct ISR */
+		if (_sw_isr_table[table_idx].isr == &z_irq_spurious && !irq_is_enabled(i)) {
 			test_vector[0] = 0;
 
 			/* check to see if we can trigger this IRQ */
