@@ -18,6 +18,7 @@ tests:
       - xg23_rb4210a
       - xg24_dk2601b
       - xg24_ek2703a
+      - xg24_rb4186c
       - xg24_rb4187c
   drivers.dac.loopback.dac1_chan1_adc1_chan0:
     extra_args:
