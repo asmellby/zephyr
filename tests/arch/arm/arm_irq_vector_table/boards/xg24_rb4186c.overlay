@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2026 Silicon Laboratories Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* The SYSRTC system timer interrupt is not in the test's vector table, use SysTick instead */
+&sysrtc0 {
+	status = "disabled";
+};
