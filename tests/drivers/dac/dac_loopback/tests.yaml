@@ -20,6 +20,7 @@ tests:
       - xg24_ek2703a
       - xg24_rb4186c
       - xg24_rb4187c
+      - xg26_rb4118a
   drivers.dac.loopback.dac1_chan1_adc1_chan0:
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="dac1-channel1-adc1-channel0.overlay"

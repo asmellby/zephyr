@@ -130,5 +130,6 @@ tests:
       - xg24_ek2703a
       - xg24_rb4186c
       - xg24_rb4187c
+      - xg26_rb4118a
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="xg2x.overlay"
