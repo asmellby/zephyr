@@ -15,6 +15,7 @@ supported:
   - bluetooth
   - comparator
   - counter
+  - crc
   - dac
   - dma
   - entropy
