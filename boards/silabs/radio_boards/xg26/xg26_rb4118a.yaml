@@ -7,6 +7,9 @@ type: mcu
 arch: arm
 ram: 512
 flash: 3200
+simulation:
+  - name: renode
+    exec: renode
 toolchain:
   - zephyr
   - gnuarmemb
@@ -24,3 +27,7 @@ supported:
   - uart
   - watchdog
 vendor: silabs
+testing:
+  renode:
+    uart: sysbus.gpioPort.vcom
+    resc: boards/silabs/radio_boards/xg26/support/xg26_rb4118a.resc

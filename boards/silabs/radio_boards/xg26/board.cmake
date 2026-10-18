@@ -9,3 +9,11 @@ include(${ZEPHYR_BASE}/boards/common/silabs_commander.board.cmake)
 
 board_runner_args(openocd)
 include(${ZEPHYR_BASE}/boards/common/openocd.board.cmake)
+
+if(EXISTS ${BOARD_DIR}/support/${BOARD}.resc)
+  set(SUPPORTED_EMU_PLATFORMS renode)
+  set(RENODE_SCRIPT ${BOARD_DIR}/support/${BOARD}.resc)
+  set(RENODE_UART sysbus.gpioPort.vcom)
+  include(${ZEPHYR_BASE}/boards/common/renode.board.cmake)
+  include(${ZEPHYR_BASE}/boards/common/renode_robot.board.cmake)
+endif()
