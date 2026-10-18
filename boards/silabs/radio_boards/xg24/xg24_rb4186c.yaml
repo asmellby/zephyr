@@ -4,6 +4,9 @@ type: mcu
 arch: arm
 ram: 256
 flash: 1536
+simulation:
+  - name: renode
+    exec: renode
 toolchain:
   - zephyr
   - gnuarmemb
@@ -23,3 +26,7 @@ supported:
   - watchdog
   - netif:openthread
 vendor: silabs
+testing:
+  renode:
+    uart: sysbus.gpioPort.vcom
+    resc: boards/silabs/radio_boards/xg24/support/xg24_rb4186c.resc

@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: Apache-2.0
+
+:name: xG24-RB4186C
+:description: This script is prepared to run Zephyr on the xG24-RB4186C radio board.
+
+$name?="xg24_rb4186c"
+
+# Radio timing (BLE T_IFS, 802.15.4 ACK turnaround) and the handshakes between
+# the main CPU and the radio sequencer CPU need a quantum well below the
+# 100 us default.
+emulation SetGlobalQuantum "0.00002"
+
+mach create $name
+machine LoadPlatformDescription @platforms/boards/silabs/brd4186c.repl
+machine LoadPlatformDescription $ORIGIN/xg24_rb4186c-exp-loopback.repl
+
+# MX25R8035F on EUSART1: MOSI PC1, MISO PC2, SCLK PC3, CS PC4
+sysbus.gpioPort AttachSpiDevice sysbus.eusart1.mx25r80 33 34 35 36
+
+# The core runs from HFRCODPLL at 78 MHz.
+cpu PerformanceInMips 78
+
+# The console is the board controller's virtual COM port on PA08/PA09, whichever USART or EUSART
+# the firmware routes there
+showAnalyzer sysbus.gpioPort.vcom
+
+# Load the image once: a reset keeps flash and RAM contents, as on hardware.
+# Reloading the ELF on reset would zero .noinit through its memory-only segments.
+sysbus LoadELF $elf
+
+macro reset
+"""
+    cpu VectorTableOffset `sysbus GetSymbolAddress "_vector_table"`
+"""
+runMacro $reset
