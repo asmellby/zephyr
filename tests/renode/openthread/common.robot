@@ -4,6 +4,16 @@
 Create Thread Medium
     Execute Command           emulation CreateIEEE802_15_4Medium "wireless"
 
+Limit Radio Range
+    [Documentation]           Makes frames reach only radios within ${range} of the sender (see Place Node).
+    [Arguments]               ${range}
+    Execute Command           wireless SetRangeWirelessFunction ${range}
+
+Place Node
+    [Arguments]               ${name}  ${x}  ${y}=0
+    Execute Command           mach set "${name}"
+    Execute Command           wireless SetPosition sysbus.radio ${x} ${y} 0
+
 Create Node
     [Documentation]           Creates a machine named ${name} running ${elf} on the board of ${RESC},
     ...                       with its radio on the IEEE 802.15.4 medium, and returns a tester for its console.
@@ -23,7 +33,8 @@ Run OT Command
     Wait For Line On Uart     Done  testerId=${tester}  timeout=10
 
 Configure Network
-    [Documentation]           Gives the node an extended address of its own and the test network's dataset.
+    [Documentation]           Gives the node an extended address of its own and the test network's dataset,
+    ...                       and starts Thread.
     [Arguments]               ${tester}  ${extaddr}
     Run OT Command            ${tester}  extaddr ${extaddr}
     Run OT Command            ${tester}  dataset init new
