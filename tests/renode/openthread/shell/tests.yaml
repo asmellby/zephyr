@@ -1,0 +1,19 @@
+common:
+  tags:
+    - net
+    - openthread
+  platform_allow:
+    - xg24_rb4186c
+    - xg26_rb4118a
+  integration_platforms:
+    - xg24_rb4186c
+
+tests:
+  openthread.renode.shell:
+    build: false
+    harness: robot
+    harness_config:
+      robot_testsuite: shell.robot
+    required_applications:
+      - application: sample.net.openthread.shell.renode
+        path: $ZEPHYR_BASE/samples/net/openthread/shell
