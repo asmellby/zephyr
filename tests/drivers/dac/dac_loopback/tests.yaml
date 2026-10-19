@@ -21,6 +21,16 @@ tests:
       - xg24_rb4186c
       - xg24_rb4187c
       - xg26_rb4118a
+  drivers.dac.loopback.xg24_abus:
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="xg24-abus.overlay"
+    platform_allow:
+      - xg24_rb4186c
+  drivers.dac.loopback.xg26_abus:
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="xg26-abus.overlay"
+    platform_allow:
+      - xg26_rb4118a
   drivers.dac.loopback.dac1_chan1_adc1_chan0:
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="dac1-channel1-adc1-channel0.overlay"

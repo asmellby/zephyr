@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2026 Silicon Laboratories Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
+ * VDAC0 channel 0 drives PD10 through the analog bus (auxiliary output), and IADC0 reads the
+ * same pad through the other CDEVEN line of the bus.
+ */
+
+#include <zephyr/dt-bindings/adc/silabs-adc.h>
+#include <zephyr/dt-bindings/dac/silabs-vdac.h>
+#include <zephyr/dt-bindings/pinctrl/silabs/xg26-pinctrl.h>
+
+/ {
+	zephyr,user {
+		io-channels = <&vdac0 0 &adc0 0>;
+		io-channel-names = "dac1", "adc1";
+	};
+};
+
+&pinctrl {
+	vdac0_abus: vdac0_abus {
+		group0 {
+			silabs,analog-bus = <ABUS_CDEVEN0_VDAC0CH0>;
+		};
+	};
+
+	adc0_abus: adc0_abus {
+		group0 {
+			silabs,analog-bus = <ABUS_CDEVEN1_IADC0>;
+		};
+	};
+};
+
+&adc0 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	pinctrl-0 = <&adc0_abus>;
+	pinctrl-names = "default";
+	status = "okay";
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_VDD_1";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,resolution = <12>;
+		zephyr,input-positive = <IADC_INPUT_PD10>;
+	};
+};
+
+&vdac0 {
+	pinctrl-0 = <&vdac0_abus>;
+	pinctrl-names = "default";
+	status = "okay";
+	voltage-reference = "AVDD";
+
+	channel@0 {
+		reg = <0>;
+		aux-output = <VDAC_OUTPUT_PD10>;
+		zephyr,resolution = <12>;
+	};
+};
