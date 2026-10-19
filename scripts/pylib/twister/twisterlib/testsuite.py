@@ -532,7 +532,7 @@ Tests should reference the category and subsystem with a dot as a separator.
     def resolve_required_applications(self):
         """Validate and update the list of required applications."""
         if not self.build:
-            if self.harness not in PYTEST_HARNESSES + ['bsim']:
+            if self.harness not in PYTEST_HARNESSES + ['bsim', 'robot']:
                 msg = f"{self.name}: `build: false` not supported with {self.harness} harness"
                 logger.error(msg)
                 raise TwisterException(msg)

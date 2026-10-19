@@ -902,6 +902,8 @@ required_applications: <list of required applications> (default empty)
     - Build directories of required applications are made available to the test harness
     - For pytest harness, build directories are passed via ``--required-build`` arguments
       and accessible through the ``required_build_dirs`` fixture
+    - For the robot harness on Renode, the images of the required applications are passed
+      as the ``REQUIRED_ELF_<n>`` variables, numbered in the order they are listed
 
     When combined with ``build: false``, the current test scenario
     skips its own build step entirely and uses the first required
@@ -949,7 +951,7 @@ build: <True|False> (default True)
     Constraints:
 
     - ``required_applications`` must be non-empty.
-    - Supported harnesses: pytest-based (e.g. ``pytest``, ``shell``) and ``bsim``.
+    - Supported harnesses: pytest-based (e.g. ``pytest``, ``shell``), ``bsim`` and ``robot``.
     - QEMU platforms are not supported.
 
 expect_reboot: <True|False> (default False)

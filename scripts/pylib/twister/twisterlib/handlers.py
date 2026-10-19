@@ -328,7 +328,14 @@ class BinaryHandler(Handler):
 
         if robot_test:
             keywords = os.path.join(self.options.coverage_basedir, 'tests/robot/common.robot')
-            elf = os.path.join(self.build_dir, "zephyr/zephyr.elf")
+            # Without a build of its own, the scenario runs the first required application
+            required_elfs = [os.path.join(build_dir, "zephyr", "zephyr.elf")
+                             for build_dir in self.instance.required_build_dirs]
+            if self.instance.testsuite.build or not required_elfs:
+                elf = os.path.join(self.build_dir, "zephyr/zephyr.elf")
+            else:
+                elf = required_elfs[0]
+            os.makedirs(self.build_dir, exist_ok=True)
             command = [self.generator_cmd]
             resc = ""
             uart = ""
@@ -346,11 +353,19 @@ class BinaryHandler(Handler):
                 sim = plat.simulator_by_name(None)
                 if resc:
                     # Renode-based robot test (existing behavior)
+                    # Results in the build directory and a free robot server port, so that
+                    # tests run in parallel do not share them
                     command = ["renode-test",
+                                "--results-dir", self.build_dir,
+                                "--robot-framework-remote-server-port", "0",
                                 "--variable", "KEYWORDS:" + keywords,
                                 "--variable", "ELF:@" + elf,
                                 "--variable", "RESC:@" + resc,
                                 "--variable", "UART:" + uart]
+                    # The images of the required applications, for tests that run several
+                    # machines
+                    for index, required_elf in enumerate(required_elfs):
+                        command += ["--variable", f"REQUIRED_ELF_{index}:@{required_elf}"]
                 elif sim.name in ['native']:
                     # native_sim support
                     binary = os.path.join(self.build_dir, "zephyr", "zephyr.exe")
