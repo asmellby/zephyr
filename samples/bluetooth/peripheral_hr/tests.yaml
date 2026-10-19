@@ -154,3 +154,10 @@ tests:
     harness: bluetooth
     depends_on: arduino_serial
     extra_args: SHIELD=frdm_kw41z
+  sample.bluetooth.peripheral_hr.renode:
+    # Built for the multi-node Renode tests in tests/renode/bluetooth/samples
+    build_only: true
+    platform_allow:
+      - xg24_rb4186c
+      - xg26_rb4118a
+    tags: bluetooth

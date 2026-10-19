@@ -56,3 +56,10 @@ tests:
       required_devices:
         # Second device required (the same platform), will be flashed with a different application
         - application: sample.bluetooth.central_ht
+  sample.bluetooth.peripheral_ht.renode:
+    # Built for the multi-node Renode tests in tests/renode/bluetooth/samples
+    build_only: true
+    platform_allow:
+      - xg24_rb4186c
+      - xg26_rb4118a
+    tags: bluetooth
