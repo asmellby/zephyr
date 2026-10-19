@@ -71,3 +71,9 @@ tests:
       - bl706_iot_dvk
       - 3r_tnh_sensor_lite
       - bl704l_dvk
+  sample.net.openthread.shell.renode:
+    # Built for the multi-node Renode tests in tests/renode/openthread
+    build_only: true
+    platform_allow:
+      - xg24_rb4186c
+      - xg26_rb4118a
