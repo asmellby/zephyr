@@ -1,0 +1,20 @@
+common:
+  tags:
+    - bluetooth
+  platform_allow:
+    - xg24_rb4186c
+    - xg26_rb4118a
+  integration_platforms:
+    - xg24_rb4186c
+
+tests:
+  bluetooth.renode.central_hr_peripheral_hr:
+    build: false
+    harness: robot
+    harness_config:
+      robot_testsuite: central_hr_peripheral_hr.robot
+    required_applications:
+      - application: sample.bluetooth.central_hr.renode
+        path: $ZEPHYR_BASE/samples/bluetooth/central_hr
+      - application: sample.bluetooth.peripheral_hr.renode
+        path: $ZEPHYR_BASE/samples/bluetooth/peripheral_hr

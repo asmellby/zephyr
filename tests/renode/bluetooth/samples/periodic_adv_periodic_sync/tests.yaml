@@ -1,0 +1,20 @@
+common:
+  tags:
+    - bluetooth
+  platform_allow:
+    - xg24_rb4186c
+    - xg26_rb4118a
+  integration_platforms:
+    - xg24_rb4186c
+
+tests:
+  bluetooth.renode.periodic_adv_periodic_sync:
+    build: false
+    harness: robot
+    harness_config:
+      robot_testsuite: periodic_adv_periodic_sync.robot
+    required_applications:
+      - application: sample.bluetooth.periodic_adv.renode
+        path: $ZEPHYR_BASE/samples/bluetooth/periodic_adv
+      - application: sample.bluetooth.periodic_sync.renode
+        path: $ZEPHYR_BASE/samples/bluetooth/periodic_sync
