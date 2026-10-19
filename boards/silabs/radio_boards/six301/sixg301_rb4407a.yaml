@@ -4,6 +4,9 @@ type: mcu
 arch: arm
 ram: 512
 flash: 1984
+simulation:
+  - name: renode
+    exec: renode
 toolchain:
   - zephyr
   - gnuarmemb
@@ -23,3 +26,7 @@ supported:
   - watchdog
   - netif:openthread
 vendor: silabs
+testing:
+  renode:
+    uart: sysbus.gpioPort.vcom
+    resc: boards/silabs/radio_boards/six301/support/sixg301_rb4407a.resc

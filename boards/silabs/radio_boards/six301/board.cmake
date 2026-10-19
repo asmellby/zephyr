@@ -3,3 +3,11 @@
 
 board_runner_args(silabs_commander "--device=${CONFIG_SOC}")
 include(${ZEPHYR_BASE}/boards/common/silabs_commander.board.cmake)
+
+if(EXISTS ${BOARD_DIR}/support/${BOARD}.resc)
+  set(SUPPORTED_EMU_PLATFORMS renode)
+  set(RENODE_SCRIPT ${BOARD_DIR}/support/${BOARD}.resc)
+  set(RENODE_UART sysbus.gpioPort.vcom)
+  include(${ZEPHYR_BASE}/boards/common/renode.board.cmake)
+  include(${ZEPHYR_BASE}/boards/common/renode_robot.board.cmake)
+endif()

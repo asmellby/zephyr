@@ -1,0 +1,12 @@
+// Loopback jumpers on the expansion header of the lab kits:
+// EXP4-EXP7 (PC0-PA4), EXP6-EXP9 (PC1-PA5), EXP8-EXP11 (PC2-PA6), EXP10-EXP13 (PC3-PA7).
+// Twister fixtures: gpio_loopback, spi_loopback, pwm_loopback, uart_loopback, gpio_spi_loopback.
+gpioPort:
+    32 -> gpioPort@4
+    4 -> gpioPort@32
+    33 -> gpioPort@5
+    5 -> gpioPort@33
+    34 -> gpioPort@6
+    6 -> gpioPort@34
+    35 -> gpioPort@7
+    7 -> gpioPort@35

@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: Apache-2.0
+
+:name: SiXG301-RB4407A
+:description: This script is prepared to run Zephyr on the SiXG301-RB4407A radio board.
+
+$name?="sixg301_rb4407a"
+
+# Radio timing (BLE T_IFS, 802.15.4 ACK turnaround) and the handshakes between
+# the main CPU and the radio sequencer CPU need a quantum well below the
+# 100 us default.
+emulation SetGlobalQuantum "0.00002"
+
+mach create $name
+machine LoadPlatformDescription @platforms/boards/silabs/brd4407a.repl
+machine LoadPlatformDescription $ORIGIN/sixg301_rb4407a-exp-loopback.repl
+
+# The core runs from SOCPLL at 150 MHz.
+cpu PerformanceInMips 150
+
+# The console is the board controller's virtual COM port on PB02/PB00, whichever EUSART the firmware
+# routes there
+showAnalyzer sysbus.gpioPort.vcom
+
+# Load the image once: a reset keeps flash and RAM contents, as on hardware.
+# Reloading the ELF on reset would zero .noinit through its memory-only segments.
+sysbus LoadELF $elf
+
+macro reset
+"""
+    cpu VectorTableOffset `sysbus GetSymbolAddress "_vector_table"`
+"""
+runMacro $reset
