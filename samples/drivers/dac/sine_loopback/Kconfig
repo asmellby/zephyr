@@ -1,0 +1,29 @@
+# Copyright (c) 2026 Silicon Laboratories Inc.
+# SPDX-License-Identifier: Apache-2.0
+
+mainmenu "DAC sine loopback sample"
+
+config SAMPLE_SINE_FREQUENCY_HZ
+	int "Frequency of the generated sine wave in Hz"
+	default 50
+	range 1 400
+	help
+	  Frequency of the sine wave the DAC generates. It must stay below half
+	  the ADC sampling rate.
+
+config SAMPLE_DAC_UPDATE_US
+	int "DAC update period in microseconds"
+	default 250
+	help
+	  Period of the timer that writes the next sine value to the DAC.
+
+config SAMPLE_ADC_INTERVAL_US
+	int "ADC sampling interval in microseconds"
+	default 1000
+
+config SAMPLE_AMPLITUDE_PERCENT
+	int "Sine amplitude in percent of the DAC half scale"
+	default 70
+	range 1 100
+
+source "Kconfig.zephyr"

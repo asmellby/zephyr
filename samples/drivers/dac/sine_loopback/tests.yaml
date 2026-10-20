@@ -1,0 +1,23 @@
+sample:
+  name: DAC sine wave loopback
+common:
+  tags:
+    - dac
+    - adc
+  depends_on:
+    - dac
+    - adc
+  harness: console
+  timeout: 30
+  harness_config:
+    type: one_line
+    regex:
+      - "Frequency check: PASS"
+tests:
+  sample.drivers.dac.sine_loopback:
+    platform_allow:
+      - xg24_rb4186c
+      - xg26_rb4118a
+    integration_platforms:
+      - xg24_rb4186c
+      - xg26_rb4118a
