@@ -5,6 +5,7 @@ common:
   platform_allow:
     - xg24_rb4186c
     - xg26_rb4118a
+    - sixg301_rb4407a
   integration_platforms:
     - xg24_rb4186c
 
