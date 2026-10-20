@@ -11,6 +11,12 @@ $name?="sixg301_rb4407a"
 emulation SetGlobalQuantum "0.00002"
 
 mach create $name
+
+# Run the main CPU and the radio sequencer CPU one after the other in each quantum. Run in parallel,
+# they deadlock: a sequencer accelerator sequence started from a register write holds the clock
+# source lock while it writes radio registers, and a main CPU write to the radio holds the radio's
+# bus lock while it waits for the clock source lock.
+machine SetSerialExecution true
 machine LoadPlatformDescription @platforms/boards/silabs/brd4407a.repl
 machine LoadPlatformDescription $ORIGIN/sixg301_rb4407a-exp-loopback.repl
 
