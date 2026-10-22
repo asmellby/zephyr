@@ -811,6 +811,45 @@ For details on using Renode see `Renode - documentation`_.
 .. _Renode - documentation:
    https://docs.renode.io
 
+Several applications in one Renode emulation
+============================================
+
+On boards whose Renode support names a console UART, the ``run_multi`` build
+target (``run_renode_multi`` when Renode is not the board's default emulator)
+runs the application in a Renode emulation shared with other applications.
+Each application is built separately, possibly for a different board, and is
+run from its own terminal::
+
+  west build -d build/central -t run_multi
+  west build -d build/peripheral -t run_multi   # in a second terminal
+
+The first invocation starts Renode in the background. Each invocation adds a
+machine for its application and shows the machine's console in its terminal.
+If the application enables Bluetooth LE or IEEE 802.15.4, the machine's radio
+joins the wireless medium that all machines share, so applications running
+either protocol, or both, reach each other. A machine that joins a running
+emulation starts at the emulation's current virtual time, with its own uptime
+starting at zero. Press :kbd:`Ctrl-]` to leave: the machine is removed, and
+Renode exits when the last machine is gone.
+
+The following CMake variables, or the environment variables of the same name,
+change the defaults:
+
+``RENODE_MULTI_NAME``
+  Machine name. Defaults to the application directory name; a suffix makes it
+  unique.
+
+``RENODE_MULTI_PORT``
+  Port of the Robot Framework server through which the invocations control
+  the shared Renode. Applications using the same port share an emulation.
+
+``RENODE_MULTI_WAIT_FOR``
+  Number of machines that must join before the emulation starts, so that they
+  all start at virtual time zero. Defaults to 1.
+
+Run :zephyr_file:`scripts/support/renode_multi.py` with ``--help`` for all
+options.
+
 Runner-Specific Overrides
 =========================
 
