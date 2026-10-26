@@ -7,6 +7,9 @@ flash: 1536
 toolchain:
   - zephyr
   - gnuarmemb
+simulation:
+  - name: vara
+    exec: vara
 supported:
   - bluetooth
   - counter

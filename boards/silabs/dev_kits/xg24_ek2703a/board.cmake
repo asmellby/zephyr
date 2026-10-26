@@ -6,3 +6,5 @@ include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
 
 board_runner_args(silabs_commander "--device=EFR32MG24B210F1536IM48")
 include(${ZEPHYR_BASE}/boards/common/silabs_commander.board.cmake)
+
+include(${ZEPHYR_BASE}/boards/common/vara.board.cmake)

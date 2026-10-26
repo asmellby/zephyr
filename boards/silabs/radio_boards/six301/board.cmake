@@ -3,3 +3,5 @@
 
 board_runner_args(silabs_commander "--device=${CONFIG_SOC}")
 include(${ZEPHYR_BASE}/boards/common/silabs_commander.board.cmake)
+
+include(${ZEPHYR_BASE}/boards/common/vara.board.cmake)

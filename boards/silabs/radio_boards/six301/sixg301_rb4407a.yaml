@@ -7,6 +7,9 @@ flash: 1984
 toolchain:
   - zephyr
   - gnuarmemb
+simulation:
+  - name: vara
+    exec: vara
 supported:
   - adc
   - bluetooth
