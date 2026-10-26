@@ -28,9 +28,19 @@ SUPPORTED_SIMS = [
     "custom",
     "simics",
     "whisper",
+    "vara",
 ]
 SUPPORTED_SIMS_IN_PYTEST = ['native', 'qemu']
-SUPPORTED_SIMS_WITH_EXEC = ['nsim', 'mdb-nsim', 'renode', 'tsim', 'native', 'simics', 'custom']
+SUPPORTED_SIMS_WITH_EXEC = [
+    'nsim',
+    'mdb-nsim',
+    'renode',
+    'tsim',
+    'native',
+    'simics',
+    'custom',
+    'vara',
+]
 
 # Simulators whose executable is resolved at CMake configure time (via
 # find_program) instead of being known during test planning. The binary that

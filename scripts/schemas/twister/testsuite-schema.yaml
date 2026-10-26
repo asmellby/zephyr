@@ -224,6 +224,7 @@ $defs:
             - armfvp
             - native
             - custom
+            - vara
       tags: {}
       timeout:
         type: integer

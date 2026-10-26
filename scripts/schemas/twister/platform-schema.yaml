@@ -42,6 +42,7 @@ $defs:
                 - native
                 - custom
                 - whisper
+                - vara
             exec:
               type: string
           required:

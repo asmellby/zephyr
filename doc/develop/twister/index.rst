@@ -641,7 +641,7 @@ platform_type: <list of platform types>
 simulation_exclude: <list of simulators>
     Set of simulators that this test scenario should not run on. Supported
     values are ``qemu``, ``simics``, ``xt-sim``, ``renode``, ``nsim``,
-    ``mdb-nsim``, ``tsim``, ``armfvp``, ``native`` and ``custom``.
+    ``mdb-nsim``, ``tsim``, ``armfvp``, ``native``, ``custom`` and ``vara``.
 
 extra_sections: <list of extra binary sections>
     When computing sizes, twister will report errors if it finds
