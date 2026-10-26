@@ -74,6 +74,7 @@ def test_runner_imports():
         'teensy',
         'trace32',
         'uf2',
+        'vara',
         'vegadude',
         'wchisp',
         'wlink',
