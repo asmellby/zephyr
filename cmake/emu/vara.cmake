@@ -4,8 +4,9 @@
 # Emulation targets for the vara SoC emulator.
 #
 # VARA_BOARD is resolved by boards/common/vara.board.cmake. Extra arguments
-# for 'vara run' are taken from VARA_ARGS, either a CMake variable or an
-# environment variable, for example VARA_ARGS="--halt-time realtime".
+# for 'vara run' are taken from VARA_ARGS and for 'vara debugserver' from
+# VARA_DEBUG_ARGS, either a CMake variable or an environment variable, for
+# example VARA_ARGS="--stdin --realtime" or VARA_DEBUG_ARGS="--halt-time realtime".
 
 find_program(VARA vara)
 
@@ -21,7 +22,9 @@ if(VARA STREQUAL VARA-NOTFOUND)
 endif()
 
 zephyr_get(VARA_ARGS)
+zephyr_get(VARA_DEBUG_ARGS)
 separate_arguments(vara_args UNIX_COMMAND "${VARA_ARGS}")
+separate_arguments(vara_debug_args UNIX_COMMAND "${VARA_DEBUG_ARGS}")
 
 set(vara_elf ${PROJECT_BINARY_DIR}/${KERNEL_ELF_NAME})
 
@@ -33,7 +36,7 @@ add_custom_target(run_vara
   )
 
 add_custom_target(debugserver_vara
-  COMMAND ${VARA} run --board ${VARA_BOARD} --gdb 3333 ${vara_args} ${vara_elf}
+  COMMAND ${VARA} debugserver --board ${VARA_BOARD} --port 3333 ${vara_debug_args} ${vara_elf}
   WORKING_DIRECTORY ${APPLICATION_BINARY_DIR}
   DEPENDS ${logical_target_for_zephyr_elf}
   USES_TERMINAL
