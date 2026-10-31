@@ -201,6 +201,10 @@
 	status = "okay";
 };
 
+&gpcrc {
+	status = "okay";
+};
+
 &bt_hci_silabs {
 	status = "okay";
 };

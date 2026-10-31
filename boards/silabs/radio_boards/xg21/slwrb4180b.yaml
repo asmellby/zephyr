@@ -11,11 +11,22 @@ toolchain:
   - zephyr
   - gnuarmemb
   - xtools
+simulation:
+  - name: vara
+    exec: vara
 supported:
+  - adc
+  - comparator
   - counter
-  - gpio
-  - nvs
-  - uart
+  - crc
   - dma
+  - entropy
+  - gpio
+  - hwinfo
+  - i2c
+  - nvs
+  - pwm
+  - retained_mem
+  - uart
   - watchdog
 vendor: silabs

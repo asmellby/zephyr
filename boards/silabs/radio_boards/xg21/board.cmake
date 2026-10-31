@@ -13,3 +13,7 @@ include(${ZEPHYR_BASE}/boards/common/silabs_commander.board.cmake)
 
 board_runner_args(openocd)
 include(${ZEPHYR_BASE}/boards/common/openocd.board.cmake)
+
+if(CONFIG_BOARD_SLWRB4180B)
+  include(${ZEPHYR_BASE}/boards/common/vara.board.cmake)
+endif()
