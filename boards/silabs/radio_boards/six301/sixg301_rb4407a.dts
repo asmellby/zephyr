@@ -333,3 +333,10 @@
 &wdog0 {
 	status = "okay";
 };
+
+/* The board has no 32.768 kHz crystal: the system timer runs on the LFRCO, whose
+ * normal mode is only good to 3%. Precision mode keeps it within 500 ppm.
+ */
+&lfrco {
+	precision-mode;
+};
