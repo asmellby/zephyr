@@ -7,11 +7,18 @@ flash: 768
 toolchain:
   - zephyr
   - gnuarmemb
+simulation:
+  - name: vara
+    exec: vara
 supported:
   - adc
   - bluetooth
   - comparator
   - counter
+  - crc
+  - i2c
+  - hwinfo
+  - retained_mem
   - dma
   - entropy
   - gpio
