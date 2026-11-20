@@ -72,6 +72,16 @@ static int silabs_letimer_pwm_set_cycles(const struct device *dev, uint32_t chan
 		sl_hal_letimer_start(config->base);
 	}
 
+	/* The LETIMER runs in EM2. Keep system-managed device power management from
+	 * stopping an output that needs it: a waveform, or a constant high level, since
+	 * a disabled LETIMER drives its outputs low.
+	 */
+	if (pulse_cycles == 0 && !invert_polarity) {
+		pm_device_busy_clear(dev);
+	} else {
+		pm_device_busy_set(dev);
+	}
+
 	return 0;
 }
 
