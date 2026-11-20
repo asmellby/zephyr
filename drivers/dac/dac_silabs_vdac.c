@@ -153,7 +153,7 @@ static DEVICE_API(dac, vdac_api) = {
 		DT_INST_FOREACH_CHILD(inst, VDAC_CHANNEL)			\
 	};									\
 										\
-	DEVICE_DT_INST_DEFINE(inst, &vdac_init, PM_DEVICE_DT_INST_GET(inst),	\
+	DEVICE_DT_INST_DEFINE(inst, &vdac_init, NULL,				\
 			      NULL, &vdac_config_##inst, POST_KERNEL,		\
 			      CONFIG_DAC_INIT_PRIORITY, &vdac_api);
 
