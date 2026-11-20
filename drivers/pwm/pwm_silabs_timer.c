@@ -13,6 +13,7 @@
 #include <zephyr/drivers/pwm.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/pm/device.h>
+#include <zephyr/pm/policy.h>
 
 #include <sl_hal_timer.h>
 
@@ -35,7 +36,46 @@ struct silabs_timer_pwm_data {
 	pwm_capture_callback_handler_t cb;
 	void *user_data;
 	int skip_trigger;
+	bool capturing;
+	uint8_t running;
+	bool pm_locked;
 };
+
+static void silabs_timer_pwm_pm_lock_get(const struct device *dev)
+{
+	struct silabs_timer_pwm_data *data = dev->data;
+
+	if (!data->pm_locked) {
+		data->pm_locked = true;
+		pm_policy_state_lock_get(PM_STATE_SUSPEND_TO_IDLE, PM_ALL_SUBSTATES);
+		pm_policy_state_lock_get(PM_STATE_STANDBY, PM_ALL_SUBSTATES);
+	}
+}
+
+static void silabs_timer_pwm_pm_lock_put(const struct device *dev)
+{
+	struct silabs_timer_pwm_data *data = dev->data;
+
+	if (data->pm_locked) {
+		data->pm_locked = false;
+		pm_policy_state_lock_put(PM_STATE_SUSPEND_TO_IDLE, PM_ALL_SUBSTATES);
+		pm_policy_state_lock_put(PM_STATE_STANDBY, PM_ALL_SUBSTATES);
+	}
+}
+
+/* Hold the lock while a channel needs the running timer: a waveform, or a constant high level,
+ * since a disabled timer drives its outputs low. A capture needs the counter too.
+ */
+static void silabs_timer_pwm_pm_lock_sync(const struct device *dev)
+{
+	struct silabs_timer_pwm_data *data = dev->data;
+
+	if (data->running || data->capturing) {
+		silabs_timer_pwm_pm_lock_get(dev);
+	} else {
+		silabs_timer_pwm_pm_lock_put(dev);
+	}
+}
 
 static int silabs_timer_pwm_set_cycles(const struct device *dev, uint32_t channel,
 				       uint32_t period_cycles, uint32_t pulse_cycles,
@@ -43,6 +83,7 @@ static int silabs_timer_pwm_set_cycles(const struct device *dev, uint32_t channe
 {
 	bool invert_polarity = (flags & PWM_POLARITY_MASK) == PWM_POLARITY_INVERTED;
 	const struct silabs_timer_pwm_config *config = dev->config;
+	struct silabs_timer_pwm_data *data = dev->data;
 
 	if (channel >= config->num_channels) {
 		return -EINVAL;
@@ -90,6 +131,13 @@ static int silabs_timer_pwm_set_cycles(const struct device *dev, uint32_t channe
 		sl_hal_timer_channel_set_compare(config->base, channel, pulse_cycles);
 		sl_hal_timer_start(config->base);
 	}
+
+	if (pulse_cycles == 0 && !invert_polarity) {
+		data->running &= ~BIT(channel);
+	} else {
+		data->running |= BIT(channel);
+	}
+	silabs_timer_pwm_pm_lock_sync(dev);
 
 	return 0;
 }
@@ -203,6 +251,8 @@ static int silabs_timer_pwm_enable_capture(const struct device *dev, uint32_t ch
 
 	sl_hal_timer_enable_interrupts(config->base, TIMER_IEN_CC0);
 	sl_hal_timer_start(config->base);
+	data->capturing = true;
+	silabs_timer_pwm_pm_lock_sync(dev);
 
 	return 0;
 }
@@ -210,6 +260,7 @@ static int silabs_timer_pwm_enable_capture(const struct device *dev, uint32_t ch
 static int silabs_timer_pwm_disable_capture(const struct device *dev, uint32_t channel)
 {
 	const struct silabs_timer_pwm_config *config = dev->config;
+	struct silabs_timer_pwm_data *data = dev->data;
 
 	if (channel != 0) {
 		LOG_ERR("Only channel 0 is supported for capture");
@@ -218,6 +269,8 @@ static int silabs_timer_pwm_disable_capture(const struct device *dev, uint32_t c
 
 	sl_hal_timer_disable_interrupts(config->base, TIMER_IEN_CC0);
 	sl_hal_timer_clear_interrupts(config->base, _TIMER_IF_MASK);
+	data->capturing = false;
+	silabs_timer_pwm_pm_lock_sync(dev);
 
 	return 0;
 }
@@ -285,6 +338,8 @@ static int silabs_timer_pwm_pm_action(const struct device *dev, enum pm_device_a
 			return err;
 		}
 
+		silabs_timer_pwm_pm_lock_sync(dev);
+
 		for (int i = 0; i < config->num_channels; i++) {
 			if ((config->base->CC[i].CFG & _TIMER_CC_CFG_MODE_MASK) !=
 			    TIMER_CC_CFG_MODE_OFF) {
@@ -298,6 +353,7 @@ static int silabs_timer_pwm_pm_action(const struct device *dev, enum pm_device_a
 			sl_hal_timer_stop(config->base);
 		}
 		sl_hal_timer_disable(config->base);
+		silabs_timer_pwm_pm_lock_put(dev);
 
 		err = clock_control_off(config->clock_dev,
 					(clock_control_subsys_t)&config->clock_cfg);
