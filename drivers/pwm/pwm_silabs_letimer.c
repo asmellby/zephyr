@@ -113,6 +113,7 @@ static int silabs_letimer_pwm_pm_action(const struct device *dev, enum pm_device
 		sl_hal_letimer_enable(config->base);
 	} else if (IS_ENABLED(CONFIG_PM_DEVICE) && (action == PM_DEVICE_ACTION_SUSPEND)) {
 		sl_hal_letimer_disable(config->base);
+		sl_hal_letimer_wait_ready(config->base);
 
 		err = clock_control_off(config->clock_dev,
 					(clock_control_subsys_t)&config->clock_cfg);
