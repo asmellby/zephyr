@@ -294,7 +294,9 @@ static int silabs_timer_pwm_pm_action(const struct device *dev, enum pm_device_a
 			}
 		}
 	} else if (IS_ENABLED(CONFIG_PM_DEVICE) && (action == PM_DEVICE_ACTION_SUSPEND)) {
-		sl_hal_timer_stop(config->base);
+		if (config->base->EN & TIMER_EN_EN) {
+			sl_hal_timer_stop(config->base);
+		}
 		sl_hal_timer_disable(config->base);
 
 		err = clock_control_off(config->clock_dev,
