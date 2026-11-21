@@ -343,3 +343,7 @@
 		};
 	};
 };
+
+&gpiod {
+	gpio-reserved-ranges = <0 2>;
+};

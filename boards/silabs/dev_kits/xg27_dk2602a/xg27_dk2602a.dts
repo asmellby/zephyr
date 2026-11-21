@@ -139,3 +139,7 @@
 &bt_hci_silabs {
 	status = "okay";
 };
+
+&gpiod {
+	gpio-reserved-ranges = <0 2>;
+};

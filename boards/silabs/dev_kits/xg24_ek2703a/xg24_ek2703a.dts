@@ -286,3 +286,7 @@
 &protimer {
 	status = "okay";
 };
+
+&gpiod {
+	gpio-reserved-ranges = <0 2>;
+};

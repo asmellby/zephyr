@@ -289,3 +289,7 @@ zephyr_i2c: &i2c0 {};
 &wdog0 {
 	status = "okay";
 };
+
+&gpiod {
+	gpio-reserved-ranges = <0 2>;
+};

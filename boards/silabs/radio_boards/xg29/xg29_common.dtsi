@@ -82,6 +82,7 @@
 
 &gpiod {
 	status = "okay";
+	gpio-reserved-ranges = <0 2>;
 };
 
 &wdog0 {

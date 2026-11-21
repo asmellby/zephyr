@@ -21,6 +21,10 @@
 	status = "okay";
 };
 
+&gpiod {
+	gpio-reserved-ranges = <0 2>;
+};
+
 &usart0 {
 	current-speed = <115200>;
 	pinctrl-0 = <&usart0_default>;
