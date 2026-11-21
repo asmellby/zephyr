@@ -203,7 +203,7 @@ static int gpio_silabs_port_set_masked_raw(const struct device *dev, gpio_port_p
 {
 	const struct gpio_silabs_port_config *config = dev->config;
 
-	sl_hal_gpio_set_port_value(config->gpio_index, value, mask);
+	sl_hal_gpio_set_port_value(config->gpio_index, value, mask & config->common.port_pin_mask);
 
 	return 0;
 }
@@ -212,7 +212,7 @@ static int gpio_silabs_port_set_bits_raw(const struct device *dev, gpio_port_pin
 {
 	const struct gpio_silabs_port_config *config = dev->config;
 
-	sl_hal_gpio_set_port(config->gpio_index, mask);
+	sl_hal_gpio_set_port(config->gpio_index, mask & config->common.port_pin_mask);
 
 	return 0;
 }
@@ -221,7 +221,7 @@ static int gpio_silabs_port_clear_bits_raw(const struct device *dev, gpio_port_p
 {
 	const struct gpio_silabs_port_config *config = dev->config;
 
-	sl_hal_gpio_clear_port(config->gpio_index, mask);
+	sl_hal_gpio_clear_port(config->gpio_index, mask & config->common.port_pin_mask);
 
 	return 0;
 }
@@ -230,7 +230,7 @@ static int gpio_silabs_port_toggle_bits(const struct device *dev, gpio_port_pins
 {
 	const struct gpio_silabs_port_config *config = dev->config;
 
-	sl_hal_gpio_toggle_port(config->gpio_index, mask);
+	sl_hal_gpio_toggle_port(config->gpio_index, mask & config->common.port_pin_mask);
 
 	return 0;
 }
