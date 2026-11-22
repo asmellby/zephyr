@@ -36,7 +36,7 @@ int silabs_pti_init(const struct device *dev)
 		return err;
 	}
 	for (int i = 0; i < state->pin_cnt; i++) {
-		switch (state->pins[i].en_bit) {
+		switch (FIELD_GET(PINCTRL_DBUS_ENABLE_BIT_MASK, state->pins[i].enable)) {
 		case _GPIO_FRC_ROUTEEN_DCLKPEN_SHIFT:
 			pti_config.dclk_port = state->pins[i].port;
 			pti_config.dclk_pin = state->pins[i].pin;

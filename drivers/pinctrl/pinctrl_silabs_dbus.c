@@ -19,13 +19,15 @@ int pinctrl_configure_pins(const pinctrl_soc_pin_t *pins, uint8_t pin_cnt, uintp
 
 	for (uint8_t i = 0U; i < pin_cnt; i++) {
 		mem_addr_t enable_reg, route_reg;
+		uint8_t en_bit = FIELD_GET(PINCTRL_DBUS_ENABLE_BIT_MASK, pins[i].enable);
+		uint8_t type = FIELD_GET(PINCTRL_DBUS_ENABLE_TYPE_MASK, pins[i].enable);
 		sl_gpio_t gpio = {
 			.port = pins[i].port,
 			.pin = pins[i].pin,
 		};
 
 		/* Configure ABUS */
-		if (pins[i].en_bit == SILABS_PINCTRL_ANALOG) {
+		if (type == PINCTRL_DBUS_ANALOG) {
 			enable_reg = DT_INST_REG_ADDR_BY_NAME(0, abus) +
 				     (pins[i].base_offset * sizeof(mem_addr_t));
 			/* Read-modify-write. */
@@ -45,16 +47,23 @@ int pinctrl_configure_pins(const pinctrl_soc_pin_t *pins, uint8_t pin_cnt, uintp
 			     (pins[i].base_offset * sizeof(mem_addr_t));
 		route_reg = enable_reg + (pins[i].route_offset * sizeof(mem_addr_t));
 
-		if (pins[i].route_offset != SILABS_PINCTRL_UNUSED) {
+		if (pins[i].route_offset != PINCTRL_DBUS_NO_ROUTE) {
 			sys_write32(pins[i].port | FIELD_PREP(PIN_MASK, pins[i].pin), route_reg);
 		}
 
-		if (pins[i].en_bit != SILABS_PINCTRL_UNUSED) {
+		switch (type) {
+		case PINCTRL_DBUS_ROUTE_ENABLE:
 			if (pins[i].mode == SL_GPIO_MODE_DISABLED) {
-				sys_clear_bit(enable_reg, pins[i].en_bit);
+				sys_clear_bit(enable_reg, en_bit);
 			} else {
-				sys_set_bit(enable_reg, pins[i].en_bit);
+				sys_set_bit(enable_reg, en_bit);
 			}
+			break;
+		case PINCTRL_DBUS_ROUTE_DISABLE:
+			sys_clear_bit(enable_reg, en_bit);
+			break;
+		default:
+			break;
 		}
 	}
 
